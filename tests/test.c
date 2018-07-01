@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+
+
+#include "../library/hashmap/MapStrStr.h"
+
+void pretty_title(char* title){
+    
+    //keep of the form 4*n+2 for optimal results
+    const int DEFAULT_WIDTH = 54;
+    
+    int len = strlen(title);
+    assert(len<DEFAULT_WIDTH-2);
+    
+    
+    char tmp[DEFAULT_WIDTH-1];
+    strcpy(tmp,title);
+    
+    if(len%2) //if len is odd then we add a blank character ad the end
+    {
+        strcat(tmp," ");
+        len++;
+    }
+    
+    //print the upper line
+    putchar('+');
+    for(int i = 0;i<DEFAULT_WIDTH-2;i++)
+        putchar('-');
+    putchar('+');
+    putchar('\n');
+    
+    
+    
+    //print the middle line
+    
+    int bar_len = (DEFAULT_WIDTH - 4 - len)/2;
+    
+    putchar('|');
+    
+    for(int i = 0;i<bar_len;i++)
+    {
+        if(i%2)
+            putchar('-');
+        else
+            putchar('*');
+    }
+    
+    printf(" %s ", tmp);
+    
+    
+    for(int i = 0;i<bar_len;i++)
+    {
+        if(i%2)
+            putchar('*');
+        else
+            putchar('-');
+    }
+    
+    
+    putchar('|');
+    putchar('\n');
+
+    //print the lower line
+
+    putchar('+');
+    for(int i = 0;i<DEFAULT_WIDTH-2;i++)
+        putchar('-');
+    putchar('+');
+    putchar('\n');
+}
+
+
+
+
+int MapStrStr_unitTests()
+{
+    
+    pretty_title("Testing MapStrStr");
+    
+    printf("Creating a MapStrStr\n");
+    MapStrStr_t* m = MapStrStr_new();
+    
+    
+    printf("Putting an element in a MapStrStr\n");
+    MapStrStr_put(m,"a","my item");
+    
+    
+    printf("Putting an element in a MapStrStr\n");
+    MapStrStr_put(m,"remove me","my item 2");
+    
+    
+    printf("Getting an element from a MapStrStr:\n");
+    char* s = MapStrStr_get(m,"a");
+    printf("%s\n",s);
+    
+    
+    printf("Getting a missing element from a MapStrStr\n");
+    char* d = MapStrStr_get(m,"z");
+    if(d)return 1;
+    
+//     printf("Getting a random element from a MapStrStr:\n");
+//     s = MapStrStr_get_one(m,0);
+//     printf("%s\n",s);
+    
+    
+    
+    printf("Getting a list of keys:\n");
+    char ** keys = MapStrStr_keys(m);
+    
+    printf("[");
+    for(int i=0;keys[i]!=NULL;i++)
+        printf("%s,",keys[i]);
+    printf("]\n");
+    
+    printf("Removing an element from a MapStrStr\n");
+    MapStrStr_remove(m,"remove me");
+    d = MapStrStr_get(m,"remove me");
+    if(d)return 1;
+    
+    
+    printf("Freeing a MapStrStr\n");
+    MapStrStr_free(m);
+    
+    return 0;
+    
+}
+
+
+
+int vector_test(){
+    
+    
+    return 0;
+}
+
+
+
+int main(){
+    
+    
+    //return MapStrStr_unitTests();
+    
+    
+}
+
+
+
+
