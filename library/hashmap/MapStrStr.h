@@ -1,6 +1,7 @@
 #ifndef MAPSTRSTR_H
 #define MAPSTRSTR_H
 
+#include "../vector/VecPtr.h"
 
 typedef void MapStrStr_t;
 
@@ -20,10 +21,13 @@ int MapStrStr_put(MapStrStr_t* in, char* key, char* value);
  */
 char*  MapStrStr_get(MapStrStr_t* in, char* key);
 
+
+
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
+ * Frees the string after removing it
  */
-int MapStrStr_remove(MapStrStr_t* in, char* key);
+int MapStrStr_delete(MapStrStr_t* in, char* key);
 
 /*
  * Get any element. Return MAP_OK or MAP_MISSING.
@@ -36,6 +40,13 @@ int MapStrStr_remove(MapStrStr_t* in, char* key);
  */
 void MapStrStr_free(MapStrStr_t* in);
 
+
+/*
+ * Free map and the contained string
+ */
+void MapStrStr_freeAll(MapStrStr_t* in);
+
+
 /*
  * Get the current size of a hashmap
  */
@@ -43,9 +54,12 @@ int MapStrStr_length(MapStrStr_t* in);
 
 
 /*
- * Get a vector containg all the defined keys in the hashmap
+ * Get a vector containg all the defined keys in the hashmap.
+ * 
+ * The pinters returned are those that point directly to the key strings.
+ * WARNING editing them will break the map.
  */
-char** MapStrStr_keys(MapStrStr_t* in);
+VecPtr_t* MapStrStr_keys(MapStrStr_t* in);
 
 
 

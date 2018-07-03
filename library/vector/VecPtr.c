@@ -1,16 +1,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "VecPtr_t.h"
+#include "VecPtr.h"
 
-void VecPtr_new(VecPtr_t *v)
+VecPtr_t* VecPtr_new()
 {
+    VecPtr_t * v = malloc(sizeof(VecPtr_t));
+    
 	v->data = NULL;
 	v->size = 0;
 	v->count = 0;
+    
+    return v;
 }
 
-int VecPtr_size(VecPtr_t *v)
+int VecPtr_lenght(VecPtr_t*v)
 {
 	return v->count;
 }
@@ -52,7 +56,7 @@ void *VecPtr_get(VecPtr_t *v, int index)
 	return v->data[index];
 }
 
-void VecPtr_delete(VecPtr_t *v, int index)
+void VecPtr_remove(VecPtr_t *v, int index)
 {
 	if (index >= v->count) {
 		return;
@@ -61,6 +65,7 @@ void VecPtr_delete(VecPtr_t *v, int index)
 	v->data[index] = NULL;
 
 	int i, j;
+    //TODO use realloc to improve performance
 	void **newarr = (void**)malloc(sizeof(void*) * v->count * 2);
 	for (i = 0, j = 0; i < v->count; i++) {
 		if (v->data[i] != NULL) {
@@ -80,3 +85,12 @@ void VecPtr_free(VecPtr_t *v)
 	free(v->data);
 }
 
+
+void VecPtr_freeAll(VecPtr_t *v)
+{
+    for (int i = 0; i < v->count; i++)
+		if (v->data[i] != NULL)
+            free(v->data[i]);
+    
+	free(v->data);
+}

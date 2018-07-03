@@ -13,14 +13,15 @@ MapStrStr_t* MapStrStr_new()
 int MapStrStr_put(MapStrStr_t* in, char* key, char* value)
 {
     char* new_val = strdup(value);
+    char* new_key = strdup(key);
     
-    return MapStrPtr_put(in,key,(void*) new_val);
+    return MapStrPtr_put(in,new_key,(void*) new_val);
 }
 
 
 char* MapStrStr_get(MapStrStr_t* in, char* key)
 {
-    char* arg;
+    char* arg = NULL;
     
     int ret = MapStrPtr_get(in,key,(void **) &arg);
     
@@ -30,18 +31,16 @@ char* MapStrStr_get(MapStrStr_t* in, char* key)
     return NULL;
 }
 
+
+
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  * 
- * Automatically free's the string
- * 
+ * Automatically free the key/value pair
  */
-int MapStrStr_remove(MapStrStr_t* in, char* key)
+int MapStrStr_delete(MapStrStr_t* in, char* key)
 {   
-    
-    
-    
-    return MapStrPtr_remove(in,key);
+    return MapStrPtr_delete(in,key);
 }
 
 /*
@@ -68,6 +67,27 @@ void MapStrStr_free(MapStrStr_t* in)
     return MapStrPtr_free(in);
 }
 
+
+void MapStrStr_freeAll(MapStrStr_t* in)
+{
+    VecPtr_t * keys = MapStrStr_keys(in);
+    
+    for(int i= 0;i<MapStrStr_length(in);i++)
+    {
+        //free the values string
+        free( MapStrStr_get(in,VecPtr_get(keys,i)));
+        
+        //free the key string
+        free( VecPtr_get(keys,i));
+    }
+        
+    VecPtr_free(keys);
+    
+    MapStrPtr_free(in);
+    
+}
+
+
 /*
  * Get the current size of a hashmap
  */
@@ -78,7 +98,7 @@ int MapStrStr_length(MapStrStr_t* in)
 
 
 //FIXME return a vector
-char** MapStrStr_keys(MapStrStr_t* in)
+VecPtr_t* MapStrStr_keys(MapStrStr_t* in)
 {
     return MapStrPtr_keys(in);
 }

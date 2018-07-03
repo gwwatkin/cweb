@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 
 
 #include "../library/hashmap/MapStrStr.h"
+#include "../library/vector/VecPtr.h"
 
 void pretty_title(char* title){
     
@@ -94,10 +96,10 @@ int MapStrStr_unitTests()
     char* s = MapStrStr_get(m,"a");
     printf("%s\n",s);
     
-    
     printf("Getting a missing element from a MapStrStr\n");
     char* d = MapStrStr_get(m,"z");
     if(d)return 1;
+    free(s);
     
 //     printf("Getting a random element from a MapStrStr:\n");
 //     s = MapStrStr_get_one(m,0);
@@ -106,18 +108,17 @@ int MapStrStr_unitTests()
     
     
     printf("Getting a list of keys:\n");
-    char ** keys = MapStrStr_keys(m);
+    VecPtr_t* keys = MapStrStr_keys(m);
     
     printf("[");
-    for(int i=0;keys[i]!=NULL;i++)
-        printf("%s,",keys[i]);
+    for(int i=0;i<VecPtr_lenght(keys);i++)
+        printf("%s,", (char*) VecPtr_get(keys,i));
     printf("]\n");
     
     printf("Removing an element from a MapStrStr\n");
-    MapStrStr_remove(m,"remove me");
+    MapStrStr_delete(m,"remove me");
     d = MapStrStr_get(m,"remove me");
     if(d)return 1;
-    
     
     printf("Freeing a MapStrStr\n");
     MapStrStr_free(m);
@@ -128,8 +129,8 @@ int MapStrStr_unitTests()
 
 
 
-int vector_test(){
-    
+int VecPtr_unitTests()
+{
     
     return 0;
 }
@@ -139,7 +140,7 @@ int vector_test(){
 int main(){
     
     
-    //return MapStrStr_unitTests();
+    return MapStrStr_unitTests();
     
     
 }
