@@ -20,9 +20,11 @@ typedef enum _valueType
     LONG,
     DOUBLE,
     STRING,
+    TRUE,
+    FALSE,
     ARRAY,
     OBJECT,
-    NULL
+    NOTHING // NULL
 } ValueType_t;
  
 
@@ -46,11 +48,12 @@ Value_t* Value_fromLong(long l);
 
 Value_t* Value_fromDouble(double d);
 
-/* NOTE: A new string is stored internally */
 Value_t* Value_fromString(char* s);
 
 Value_t* Value_copy(Value_t* v);
 
+
+void Value_destroy(Value_t* v);
 
 
 

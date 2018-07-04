@@ -51,3 +51,18 @@ Value_t* Value_copy(Value_t* v)
     }
     
 }
+
+
+
+
+void Value_destroy(Value_t* v)
+{   
+    switch(v->type)
+    {
+        case STRING:
+            free(v->string);
+        default:
+            return;
+    }
+    
+}
