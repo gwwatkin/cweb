@@ -95,11 +95,11 @@ int MapStrStr_unitTests()
     printf("Getting an element from a MapStrStr:\n");
     char* s = MapStrStr_get(m,"a");
     printf("%s\n",s);
+    free(s);
     
     printf("Getting a missing element from a MapStrStr\n");
     char* d = MapStrStr_get(m,"z");
     if(d)return 1;
-    free(s);
     
 //     printf("Getting a random element from a MapStrStr:\n");
 //     s = MapStrStr_get_one(m,0);
@@ -108,20 +108,24 @@ int MapStrStr_unitTests()
     
     
     printf("Getting a list of keys:\n");
-    VecPtr_t* keys = MapStrStr_keys(m);
+    VecPtr_t* keys = MapStrStr_refsToKeys(m);
     
     printf("[");
     for(int i=0;i<VecPtr_lenght(keys);i++)
-        printf("%s,", (char*) VecPtr_get(keys,i));
+        printf("%s,", (char*) VecPtr_at(keys,i));
     printf("]\n");
+    
+    VecPtr_free(keys);
+    
     
     printf("Removing an element from a MapStrStr\n");
     MapStrStr_delete(m,"remove me");
     d = MapStrStr_get(m,"remove me");
     if(d)return 1;
+    free(d);
     
     printf("Freeing a MapStrStr\n");
-    MapStrStr_free(m);
+    MapStrStr_freeAll(m);
     
     return 0;
     

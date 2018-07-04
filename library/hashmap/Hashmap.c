@@ -1,50 +1,32 @@
-/*
-* Generic map implementation.
-*/
-#include "MapStrPtr.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 
+#include "Hashmap.h"
+
+
 #define INITIAL_SIZE (256)
 #define MAX_CHAIN_LENGTH (8)
 
-/* We need to keep keys and values */
-typedef struct _MapStrPtr_element{
-    char* key;
-    int in_use;
-    void* data;
-} MapStrPtr_element;
-
-/* A hashmap has some maximum size and current size,
-* as well as the data to hold.
-* TODO make this the actual MapStrPtr_t, and put in the header
-*/
-typedef struct _MapStrPtr_map{
-    int table_size;
-    int size;
-    MapStrPtr_element *data;
-} MapStrPtr_map;
 
 /*
 * Return an empty hashmap, or NULL on failure.
 */
-MapStrPtr_t* MapStrPtr_new() {
-    MapStrPtr_map* m = (MapStrPtr_map*) malloc(sizeof(MapStrPtr_map));
+Hashmap_t* Hashmap_new() {
+    Hashmap_t * m = malloc(sizeof(Hashmap_t));
     if(!m) goto err;
 
-    m->data = (MapStrPtr_element*) calloc(INITIAL_SIZE, sizeof(MapStrPtr_element));
+    m->data = (Hashmap_element*) calloc(INITIAL_SIZE, sizeof(Hashmap_element));
     if(!m->data) goto err;
 
     m->table_size = INITIAL_SIZE;
     m->size = 0;
 
-    return (MapStrPtr_t*) m;
+    return m;
     err:
         if (m)
-            MapStrPtr_free(m);
+            Hashmap_free(m);
         return NULL;
 }
 
@@ -149,27 +131,27 @@ static unsigned long crc32_tab[] = {
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-unsigned long crc32(const unsigned char *s, unsigned int len)
+unsigned long Hashmap_crc32_(const unsigned char *s, unsigned int len)
 {
-unsigned int i;
-unsigned long crc32val;
+    unsigned int i;
+    unsigned long crc32val;
 
-crc32val = 0;
-for (i = 0;  i < len;  i ++)
-    {
-    crc32val =
-    crc32_tab[(crc32val ^ s[i]) & 0xff] ^
-    (crc32val >> 8);
-    }
-return crc32val;
+    crc32val = 0;
+    for (i = 0;  i < len;  i ++)
+        {
+        crc32val =
+        crc32_tab[(crc32val ^ s[i]) & 0xff] ^
+        (crc32val >> 8);
+        }
+    return crc32val;
 }
 
 /*
-* Hashing function for a string
-*/
-unsigned int MapStrPtr_hash_int(MapStrPtr_map * m, char* keystring){
+ * Hashing function for a string
+ */
+unsigned int Hashmap_hashInt_(Hashmap_t * m, char* keystring){
 
-    unsigned long key = crc32((unsigned char*)(keystring), strlen(keystring));
+    unsigned long key = Hashmap_crc32_((unsigned char*)(keystring), strlen(keystring));
 
     /* Robert Jenkins' 32 bit Mix Function */
     key += (key << 12);
@@ -191,18 +173,15 @@ unsigned int MapStrPtr_hash_int(MapStrPtr_map * m, char* keystring){
 * Return the integer of the location in data
 * to store the point to the item, or MAP_FULL.
 */
-int MapStrPtr_hash(MapStrPtr_t* in, char* key){
+int Hashmap_findLocationForKey_(Hashmap_t* m, char* key){
     int curr;
     int i;
-
-    /* Cast the hashmap */
-    MapStrPtr_map* m = (MapStrPtr_map *) in;
 
     /* If full, return immediately */
     if(m->size >= (m->table_size/2)) return MAP_FULL;
 
     /* Find the best index */
-    curr = MapStrPtr_hash_int(m, key);
+    curr = Hashmap_hashInt_(m, key);
 
     /* Linear probing */
     for(i = 0; i< MAX_CHAIN_LENGTH; i++){
@@ -221,15 +200,14 @@ int MapStrPtr_hash(MapStrPtr_t* in, char* key){
 /*
 * Doubles the size of the hashmap, and rehashes all the elements
 */
-int MapStrPtr_rehash(MapStrPtr_t* in){
+int Hashmap_hash_(Hashmap_t* m){
     int i;
     int old_size;
-    MapStrPtr_element* curr;
+    Hashmap_element* curr;
 
     /* Setup the new elements */
-    MapStrPtr_map* m = (MapStrPtr_map *) in;
-    MapStrPtr_element* temp = (MapStrPtr_element *)
-        calloc(2 * m->table_size, sizeof(MapStrPtr_element));
+    Hashmap_element* temp = (Hashmap_element *)
+        calloc(2 * m->table_size, sizeof(Hashmap_element));
     if(!temp) return MAP_OMEM;
 
     /* Update the array */
@@ -248,7 +226,7 @@ int MapStrPtr_rehash(MapStrPtr_t* in){
         if (curr[i].in_use == 0)
             continue;
             
-        status = MapStrPtr_put(m, curr[i].key, curr[i].data);
+        status = Hashmap_put(m, curr[i].key, curr[i].data);
         if (status != MAP_OK)
             return status;
     }
@@ -258,28 +236,26 @@ int MapStrPtr_rehash(MapStrPtr_t* in){
     return MAP_OK;
 }
 
-/*
-* Add a pointer to the hashmap with some key
-*/
-int MapStrPtr_put(MapStrPtr_t* in, char* key, void* value){
+
+/*############################*/
+
+
+int Hashmap_put(Hashmap_t* m, char* key, void* value){
     int index;
-    MapStrPtr_map* m;
-
-    /* Cast the hashmap */
-    m = (MapStrPtr_map *) in;
-
+    
+    
     /* Find a place to put our value */
-    index = MapStrPtr_hash(in, key);
+    index = Hashmap_findLocationForKey_(m, key);
     while(index == MAP_FULL){
-        if (MapStrPtr_rehash(in) == MAP_OMEM) {
+        if (Hashmap_hash_(m) == MAP_OMEM) {
             return MAP_OMEM;
         }
-        index = MapStrPtr_hash(in, key);
+        index = Hashmap_findLocationForKey_(m, key);
     }
 
     /* Set the data */
     m->data[index].data = value;
-    m->data[index].key = key;
+    m->data[index].key = strdup(key);
     m->data[index].in_use = 1;
     m->size++; 
 
@@ -287,18 +263,17 @@ int MapStrPtr_put(MapStrPtr_t* in, char* key, void* value){
 }
 
 /*
-* Get your pointer out of the hashmap with a key
-*/
-int MapStrPtr_get(MapStrPtr_t* in, char* key, void* *arg){
+ * Get your pointer out of the hashmap with a key
+ */
+void* Hashmap_at(Hashmap_t* m, char* key){
     int curr;
     int i;
-    MapStrPtr_map* m;
 
-    /* Cast the hashmap */
-    m = (MapStrPtr_map *) in;
-
+    /* Put the value in here */
+    void* value = NULL;
+    
     /* Find data location */
-    curr = MapStrPtr_hash_int(m, key);
+    curr = Hashmap_hashInt_(m, key);
 
     /* Linear probing, if necessary */
     for(i = 0; i<MAX_CHAIN_LENGTH; i++){
@@ -306,33 +281,25 @@ int MapStrPtr_get(MapStrPtr_t* in, char* key, void* *arg){
         int in_use = m->data[curr].in_use;
         if (in_use == 1){
             if (strcmp(m->data[curr].key,key)==0){
-                *arg = (m->data[curr].data);
-                return MAP_OK;
+                value = m->data[curr].data;
+                break;
             }
         }
 
         curr = (curr + 1) % m->table_size;
     }
 
-    *arg = NULL;
-
     /* Not found */
-    return MAP_MISSING;
+    return value;
 }
 
-/*
-* Iterate the function parameter over each element in the hashmap.  The
-* additional void* argument is passed to the function as its first
-* argument and the hashmap element is the second.
-*/
-int MapStrPtr_iterate(MapStrPtr_t* in, PFany f, void* item) {
+
+
+int Hashmap_iterate(Hashmap_t* m, PFany f, void* item) {
     int i;
 
-    /* Cast the hashmap */
-    MapStrPtr_map* m = (MapStrPtr_map*) in;
-
     /* On empty hashmap, return immediately */
-    if (MapStrPtr_length(m) <= 0)
+    if (Hashmap_length(m) <= 0)
         return MAP_MISSING;	
 
     /* Linear probing */
@@ -349,18 +316,15 @@ int MapStrPtr_iterate(MapStrPtr_t* in, PFany f, void* item) {
 }
 
 /*
-* Remove an element with that key from the map
-*/
-int MapStrPtr_remove(MapStrPtr_t* in, char* key){
+ * Remove an element with that key from the map
+ */
+int Hashmap_remove(Hashmap_t* m, char* key){
     int i;
     int curr;
-    MapStrPtr_map* m;
 
-    /* Cast the hashmap */
-    m = (MapStrPtr_map *) in;
 
     /* Find key */
-    curr = MapStrPtr_hash_int(m, key);
+    curr = Hashmap_hashInt_(m, key);
 
     /* Linear probing, if necessary */
     for(i = 0; i<MAX_CHAIN_LENGTH; i++){
@@ -370,45 +334,6 @@ int MapStrPtr_remove(MapStrPtr_t* in, char* key){
             if (strcmp(m->data[curr].key,key)==0){
                 /* Blank out the fields */
                 m->data[curr].in_use = 0;
-                m->data[curr].data = NULL;
-                m->data[curr].key = NULL;
-
-                /* Reduce the size */
-                m->size--;
-                return MAP_OK;
-            }
-        }
-        curr = (curr + 1) % m->table_size;
-    }
-
-    /* Data not found */
-    return MAP_MISSING;
-}
-
-
-/*
- * Remove an element with that key from the map and free the key/value pair
- */
-int MapStrPtr_delete(MapStrPtr_t* in, char* key){
-    int i;
-    int curr;
-    MapStrPtr_map* m;
-
-    /* Cast the hashmap */
-    m = (MapStrPtr_map *) in;
-
-    /* Find key */
-    curr = MapStrPtr_hash_int(m, key);
-
-    /* Linear probing, if necessary */
-    for(i = 0; i<MAX_CHAIN_LENGTH; i++){
-
-        int in_use = m->data[curr].in_use;
-        if (in_use == 1){
-            if (strcmp(m->data[curr].key,key)==0){
-                /* Blank out and free the fields */
-                m->data[curr].in_use = 0;
-                free(m->data[curr].data);
                 m->data[curr].data = NULL;
                 free(m->data[curr].key);
                 m->data[curr].key = NULL;
@@ -426,39 +351,70 @@ int MapStrPtr_delete(MapStrPtr_t* in, char* key){
 }
 
 
-/* Deallocate the hashmap */
-void MapStrPtr_free(MapStrPtr_t* in){
-    MapStrPtr_map* m = (MapStrPtr_map*) in;
+
+void Hashmap_free(Hashmap_t* m){
+    
+    /* first we call free on all of the keys */
+    for(int i = 0; i<m->table_size; i++)
+            free(m->data[i].key);
+    
+    /* then we can actually delete the hashmap */
     free(m->data);
     free(m);
 }
 
-/* Return the length of the hashmap */
-int MapStrPtr_length(MapStrPtr_t* in){
-    MapStrPtr_map* m = (MapStrPtr_map *) in;
-    if(m != NULL) return m->size;
-    else return 0;
+
+
+void Hashmap_freeAll(Hashmap_t* m){
+    
+    /* first we call free on all of the values */
+    for(int i = 0; i<m->table_size; i++)
+            free(m->data[i].data);
+    
+    /* Now we can actually delete the hashmap */
+    Hashmap_free(m);
+}
+
+
+int Hashmap_length(Hashmap_t* m){
+    if(m != NULL) 
+        return m->size;
+    else
+        return 0;
 } 
 
 
-/* Get an array of pointers to key strings, it's terminated by a null pointer
-* The strings are not newly allocated.
-*/
-extern VecPtr_t*  MapStrPtr_keys(MapStrPtr_t* in){
+VecPtr_t*  Hashmap_keys(Hashmap_t* m){
     
     int i;
-
-    /* Cast the hashmap */
-    MapStrPtr_map* m = (MapStrPtr_map*) in;
 
     VecPtr_t* out = VecPtr_new();
     
     /* Linear probing */
     for(i = 0; i< m->table_size; i++)
         if(m->data[i].in_use != 0) 
-            VecPtr_add(out,m->data[i].key);
+            VecPtr_push(out,strdup(m->data[i].key));
         
     
     return out;
     
 }
+
+
+
+VecPtr_t*  Hashmap_refsToKeys(Hashmap_t* m){
+    
+    int i;
+
+    VecPtr_t* out = VecPtr_new();
+    
+    /* Linear probing */
+    for(i = 0; i< m->table_size; i++)
+        if(m->data[i].in_use != 0) 
+            VecPtr_push(out,m->data[i].key);
+        
+    
+    return out;
+    
+}
+

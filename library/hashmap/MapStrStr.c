@@ -3,44 +3,51 @@
 
 #include "MapStrStr.h"
 
-#include "MapStrPtr.h"
+#include "Hashmap.h"
 
 MapStrStr_t* MapStrStr_new()
 {
-    return MapStrPtr_new();
+    return Hashmap_new();
 }
 
 int MapStrStr_put(MapStrStr_t* in, char* key, char* value)
 {
     char* new_val = strdup(value);
-    char* new_key = strdup(key);
     
-    return MapStrPtr_put(in,new_key,(void*) new_val);
+    return Hashmap_put(in,key,(void*) new_val);
 }
 
 
 char* MapStrStr_get(MapStrStr_t* in, char* key)
 {
-    char* arg = NULL;
+    char * val = (char*) Hashmap_at(in,key);
+    if(val) 
+        return strdup(val);
     
-    int ret = MapStrPtr_get(in,key,(void **) &arg);
-    
-    if(ret == MAP_OK)
-        return strdup(arg);
-    
-    return NULL;
+    else 
+        return NULL;
 }
+
+
+char* MapStrStr_at(MapStrStr_t* in, char* key)
+{
+    return (char*) Hashmap_at(in,key);
+    
+}
+
 
 
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  * 
- * Automatically free the key/value pair
+ * Automatically free the value as well
  */
 int MapStrStr_delete(MapStrStr_t* in, char* key)
 {   
-    return MapStrPtr_delete(in,key);
+    free(Hashmap_at(in,key));
+    
+    return Hashmap_remove(in,key);
 }
 
 /*
@@ -51,7 +58,7 @@ int MapStrStr_delete(MapStrStr_t* in, char* key)
 // {
 //     char* arg;
 //     
-//     int ret = MapStrPtr_get_one(in,(void **) &arg,remove);
+//     int ret = Hashmap_get_one(in,(void **) &arg,remove);
 //     
 //     if(ret == MAP_OK)
 //         return strdup(arg);
@@ -62,29 +69,9 @@ int MapStrStr_delete(MapStrStr_t* in, char* key)
 /*
  * Free the hashmap
  */
-void MapStrStr_free(MapStrStr_t* in)
-{
-    return MapStrPtr_free(in);
-}
-
-
 void MapStrStr_freeAll(MapStrStr_t* in)
 {
-    VecPtr_t * keys = MapStrStr_keys(in);
-    
-    for(int i= 0;i<MapStrStr_length(in);i++)
-    {
-        //free the values string
-        free( MapStrStr_get(in,VecPtr_get(keys,i)));
-        
-        //free the key string
-        free( VecPtr_get(keys,i));
-    }
-        
-    VecPtr_free(keys);
-    
-    MapStrPtr_free(in);
-    
+    Hashmap_freeAll(in);
 }
 
 
@@ -93,12 +80,17 @@ void MapStrStr_freeAll(MapStrStr_t* in)
  */
 int MapStrStr_length(MapStrStr_t* in)
 {
-    return MapStrPtr_length(in);
+    return Hashmap_length(in);
 }
 
 
-//FIXME return a vector
+VecPtr_t * MapStrStr_refsToKeys(MapStrStr_t* in)
+{
+    return Hashmap_refsToKeys(in);
+}
+
+
 VecPtr_t* MapStrStr_keys(MapStrStr_t* in)
 {
-    return MapStrPtr_keys(in);
+    return Hashmap_keys(in);
 }

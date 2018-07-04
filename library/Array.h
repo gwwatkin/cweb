@@ -1,17 +1,18 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include "vector/VecPtr.h"
 
-#inc
-
-/**
- * This is the main mutable array implementation provided by the framework.
- * 
- * It's an array of Value structs.
- * 
- * internally it uses VecPtr to store 
-
-
+   /*
+    * +------------------------------------------------------------------------
+    * | JSON like Array.
+    * |------------------------------------------------------------------------
+    * | A simple ordered mutable array.
+    * |
+    * | The underlying implementation resides in VecPtr.
+    * |
+    * 
+    */ 
 
 
 #endif

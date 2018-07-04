@@ -4,7 +4,7 @@
 # TODO make a makefile
 
 SOURCE_FILES='library/server/request_handler.c
-              library/hashmap/MapStrPtr.c
+              library/hashmap/Hashmap.c
               library/hashmap/MapStrStr.c
               library/vector/VecPtr.c'
 

@@ -17,10 +17,15 @@ MapStrStr_t* MapStrStr_new();
 int MapStrStr_put(MapStrStr_t* in, char* key, char* value);
 
 /*
- * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
+ * Get an element from the hashmap.
  */
 char*  MapStrStr_get(MapStrStr_t* in, char* key);
 
+
+/*
+ * Get a reference to the string pointed to by the item at position 'key'.
+ */
+char*  MapStrStr_at(MapStrStr_t* in, char* key);
 
 
 /*
@@ -35,14 +40,8 @@ int MapStrStr_delete(MapStrStr_t* in, char* key);
  */
 // char* MapStrStr_get_one(MapStrStr_t* in, int remove);
 
-/*
- * Free the hashmap
- */
-void MapStrStr_free(MapStrStr_t* in);
-
-
-/*
- * Free map and the contained string
+/**
+ * Free the hashmap and make all of the contents disappear
  */
 void MapStrStr_freeAll(MapStrStr_t* in);
 
@@ -53,13 +52,20 @@ void MapStrStr_freeAll(MapStrStr_t* in);
 int MapStrStr_length(MapStrStr_t* in);
 
 
+
+/**
+ * Get a vector containing all the strings used as keys in the map
+ */
+VecPtr_t* MapStrStr_key(MapStrStr_t* in);
+
+
 /*
  * Get a vector containg all the defined keys in the hashmap.
  * 
- * The pinters returned are those that point directly to the key strings.
- * WARNING editing them will break the map.
+ * The pointers returned are those that point directly to the key strings.
+ * WARNING editing them will break the map, use for read only.
  */
-VecPtr_t* MapStrStr_keys(MapStrStr_t* in);
+VecPtr_t* MapStrStr_refsToKeys(MapStrStr_t* in);
 
 
 
