@@ -6,18 +6,24 @@
 typedef void MapStrStr_t;
 
 
+/**
+ * A string to string map. Once a string is put into it, a copy is stored and
+ * managed internally.
+ */
+
 /*
  * Constructor
 */
 MapStrStr_t* MapStrStr_new();
 
 /*
- * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
+ * Add an element to the hashmap. The value and the key are kept internally
+ * Return MAP_OK or MAP_OMEM.
  */
 int MapStrStr_put(MapStrStr_t* in, char* key, char* value);
 
 /*
- * Get an element from the hashmap.
+ * Get an element from the hashmap. (the returned value is newly allocated)
  */
 char*  MapStrStr_get(MapStrStr_t* in, char* key);
 
@@ -67,6 +73,11 @@ VecPtr_t* MapStrStr_key(MapStrStr_t* in);
  */
 VecPtr_t* MapStrStr_refsToKeys(MapStrStr_t* in);
 
+
+/*
+ * Print to screen the contents of a hashmap (usefull for debug)
+ */
+void MapStrStr_print(MapStrStr_t* in);
 
 
 

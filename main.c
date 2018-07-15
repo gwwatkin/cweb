@@ -56,6 +56,9 @@ int main(int argc,char *argv[]){
     //this will be used as a handle to talk to the socket
     int sockfd;
     
+    
+    int success = -1;//used to detect errors while configuring the socket
+    
     printf("creating socket\n");
     
     sockfd = socket( AF_INET,     // domain: IPv4 internet socket
@@ -85,13 +88,28 @@ int main(int argc,char *argv[]){
                                           // localhost, your ip ...)
     address.sin_port = htons( PORT );
     
+    int yes = 1;//helper
+    success = setsockopt(sockfd,
+                             SOL_SOCKET,
+                             SO_REUSEADDR, 
+                             &yes, sizeof(yes)
+                             );
+                             
+    if (success<0)
+    {
+        printf("setting option failed, setsockopt returned %i\n",success);
+        exit(EXIT_FAILURE);
+    }
+    
+
+
     // now we actually connect the socket to the desired port
-    int success = bind(sockfd,
+    success = bind(sockfd,
                        (struct sockaddr *) &address, 
-                       sizeof(address)
+                        sizeof(address)
                       );
     
-    //if something went wrong
+
     if (success<0)
     {
         printf("binding failed, bind returned %i\n",success);

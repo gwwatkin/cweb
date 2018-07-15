@@ -21,6 +21,7 @@ typedef enum
 {   
     UNDEFINED=-1,
     GET,
+    HEAD,
     POST,
     PUT,
     PATCH,
@@ -39,7 +40,7 @@ typedef struct
     Method method;
     char * protocol;
     char * url;
-    MapStrStr_t* headers;
+    MapStrStr_t* plain_headers;
     
 } Request;
 
@@ -51,16 +52,7 @@ void Request_free(Request* r);
 void Request_print(Request* r);
 
 
-/**
- * @return 1 on success -1 on error.
- */
-int Request_parseFirstLine(Request* r,char * line);
 
-
-/**
- * @return 1 if its a header line 0 if it's a blank line -1 on error.
- */
-int Request_parseHeaderLine(Request* r,char * line);
 
 
 
@@ -93,7 +85,19 @@ void * request_handle(void * int_live_connection);
    
    
    
-   
+/**
+ * Used to determine the type of the request
+ * @return 1 on success -1 on error.
+ */
+int Request_parseFirstLine(Request* r,char * line);
+
+
+/**
+ * Read a line and if its valid put it into the request field
+ * @return 1 if its a header line 0 if it's a blank line -1 on error.
+ * 
+ */
+int Request_parseHeaderLine(Request* r,char * line); 
    
    
    

@@ -88,6 +88,9 @@ int MapStrStr_unitTests()
     MapStrStr_put(m,"a","my item");
     
     
+    printf("Putting an element in a MapStrStr with an existing key\n");
+    MapStrStr_put(m,"a","my suplicate item");
+    
     printf("Putting an element in a MapStrStr\n");
     MapStrStr_put(m,"remove me","my item 2");
     
@@ -143,9 +146,12 @@ int VecPtr_unitTests()
 
 int main(){
     
+    printf("\"ABC\" has length %i\n",strlen("ABC"));
     
     return MapStrStr_unitTests();
     
+    
+    pretty_title("Done with tests");
     
 }
 

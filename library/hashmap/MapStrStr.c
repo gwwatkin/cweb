@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "MapStrStr.h"
 
@@ -12,7 +13,11 @@ MapStrStr_t* MapStrStr_new()
 
 int MapStrStr_put(MapStrStr_t* in, char* key, char* value)
 {
+    //duplicate only the value because Hashmap keeps track of keys internally
     char* new_val = strdup(value);
+    
+    //remove the previous if present
+    free(Hashmap_at(in,key));
     
     return Hashmap_put(in,key,(void*) new_val);
 }
@@ -94,3 +99,29 @@ VecPtr_t* MapStrStr_keys(MapStrStr_t* in)
 {
     return Hashmap_keys(in);
 }
+
+
+
+void MapStrStr_print(MapStrStr_t* in)
+{
+    VecPtr_t * keys = MapStrStr_refsToKeys(in);
+    char *key = NULL;
+    
+    printf("MapStrStr at <%#lx> \n{",(unsigned long)in);
+    
+    for(int i = 0; i<VecPtr_lenght(keys);i++)
+    {
+        key=VecPtr_at(keys,i);
+        char * val = MapStrStr_at(in,key);    
+        
+        if(val == NULL)
+            val = val;
+        
+        
+        printf("\t\"%s\"\t=>\t\"%s\"\n",key,val);
+    }
+        
+    printf("}\n");
+    VecPtr_free(keys);
+}
+

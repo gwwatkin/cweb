@@ -62,7 +62,7 @@ void Value_destroy(Value_t* v)
         case STRING:
             free(v->string);
         default:
-            return;
+            free(v);
     }
     
 }

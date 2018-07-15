@@ -6,8 +6,8 @@
 SOURCE_FILES='library/server/request_handler.c
               library/hashmap/Hashmap.c
               library/hashmap/MapStrStr.c
-              library/vector/VecPtr.c'
-
+              library/vector/VecPtr.c
+              library/utils.c'
 
 
 gcc -g -o bin/tests \
@@ -36,4 +36,4 @@ gcc -g -o bin/main \
     main.c \
     -pthread
 
-# ./bin/main
+./bin/main

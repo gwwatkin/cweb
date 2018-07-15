@@ -255,6 +255,7 @@ int Hashmap_put(Hashmap_t* m, char* key, void* value){
 
     /* Set the data */
     m->data[index].data = value;
+    free(m->data[index].key);
     m->data[index].key = strdup(key);
     m->data[index].in_use = 1;
     m->size++; 

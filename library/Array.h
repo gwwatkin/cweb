@@ -34,7 +34,7 @@ Array_t* Array_new();
 void Array_push(Array_t* arr);
 
 
-/* pop from the back of the array, and return a pointer to the popped value */
+/* pop from the back of the array, and return a pointer to the popped value, null if empty */
 Value_t* Array_pop()
 
 
