@@ -24,10 +24,10 @@ typedef struct _AppKernel
 
 
 /**
- * Initialize an application, with all the relevant subsystems (i.e. session, 
- * database...)
+ * Initialize an application, with all the relevant subsystems (i.e. router,session, 
+ * database,HttpEngine...)
  */
-AppKernel_t* AppKernel_new(FILE* input_stream, FILE* input_stream);
+AppKernel_t* AppKernel_new();
 
 
 int AppKernel_registerRoutes(RoutingTable* t);
