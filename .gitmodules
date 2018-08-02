@@ -1,0 +1,3 @@
+[submodule "vendor/onion"]
+	path = vendor/onion
+	url = https://github.com/gwwatkin/onion.git

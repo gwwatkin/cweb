@@ -11,6 +11,21 @@
 
 #define MAX_HEADER_LINE_LENGHT 8190 //same as apache 2.3
 
+/**
+ * @param live_connection, file descriptor to the socket from wich read the
+ * request
+ */
+void * old_request_handle(void * live_connection)
+{
+
+
+
+    
+}
+
+
+
+  // BEGIN pre picohttpparser
 
    /*
     * +------------------------------------------------------------------------
@@ -23,7 +38,9 @@
     */ 
 
 
-void * request_handle(void * int_live_connection){
+
+
+void * old_request_handle(void * int_live_connection){
     
      printf("Accepting request\n");
     
@@ -313,6 +330,7 @@ char * Method_show(Method m)
     
 }
 
+// BEGIN pre picohttpparser
 
 
 

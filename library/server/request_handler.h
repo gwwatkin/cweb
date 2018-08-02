@@ -101,27 +101,6 @@ int Request_parseHeaderLine(Request* r,char * line);
    
    
    
-   
-   
-   
-   
-   
-   
-   /*
-    * +------------------------------------------------------------------------
-    * | Cookie
-    * |------------------------------------------------------------------------
-    * | A simple web cookie
-    * |
-    */ 
-    
-    
-typedef struct 
-{
-    char * key;
-    char * value;
-} Cookie;
-    
     
 
 #endif

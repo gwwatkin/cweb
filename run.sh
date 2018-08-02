@@ -3,8 +3,7 @@
 
 # TODO make a makefile
 
-SOURCE_FILES='library/server/request_handler.c
-              library/hashmap/Hashmap.c
+SOURCE_FILES='library/hashmap/Hashmap.c
               library/hashmap/MapStrStr.c
               library/vector/VecPtr.c
               library/utils.c'
@@ -13,7 +12,8 @@ SOURCE_FILES='library/server/request_handler.c
 gcc -g -o bin/tests \
     $SOURCE_FILES \
     tests/test.c \
-    -pthread
+    -pthread \
+    -Lonion
     
 echo "Running tests..."
 
@@ -34,6 +34,7 @@ fi
 gcc -g -o bin/main \
     $SOURCE_FILES \
     main.c \
-    -pthread
+    -pthread \
+    -lonion
 
 ./bin/main
