@@ -1,7 +1,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include "vector/VecPtr.h"
+#include "vector/vector.h"
 #include "Value.h"
 
    /*
@@ -10,7 +10,7 @@
     * |------------------------------------------------------------------------
     * | A simple ordered mutable array.
     * |
-    * | The underlying implementation resides in VecPtr.
+    * | The underlying implementation resides in vector.
     * |
     * | This Array can also be used as a stack. 
     * |

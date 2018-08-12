@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-#include "Hashmap.h"
+#include "hashmap.h"
 
 
 #define INITIAL_SIZE (256)
@@ -13,11 +13,11 @@
 /*
 * Return an empty hashmap, or NULL on failure.
 */
-Hashmap_t* Hashmap_new() {
-    Hashmap_t * m = malloc(sizeof(Hashmap_t));
+hashmap_t* hashmap_new() {
+    hashmap_t * m = malloc(sizeof(hashmap_t));
     if(!m) goto err;
 
-    m->data = (Hashmap_element*) calloc(INITIAL_SIZE, sizeof(Hashmap_element));
+    m->data = (hashmap_element*) calloc(INITIAL_SIZE, sizeof(hashmap_element));
     if(!m->data) goto err;
 
     m->table_size = INITIAL_SIZE;
@@ -26,7 +26,7 @@ Hashmap_t* Hashmap_new() {
     return m;
     err:
         if (m)
-            Hashmap_free(m);
+            hashmap_free(m);
         return NULL;
 }
 
@@ -131,7 +131,7 @@ static unsigned long crc32_tab[] = {
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-unsigned long Hashmap_crc32_(const unsigned char *s, unsigned int len)
+unsigned long hashmap_crc32_(const unsigned char *s, unsigned int len)
 {
     unsigned int i;
     unsigned long crc32val;
@@ -149,9 +149,9 @@ unsigned long Hashmap_crc32_(const unsigned char *s, unsigned int len)
 /*
  * Hashing function for a string
  */
-unsigned int Hashmap_hashInt_(Hashmap_t * m, char* keystring){
+unsigned int hashmap_hashInt_(hashmap_t * m, char* keystring){
 
-    unsigned long key = Hashmap_crc32_((unsigned char*)(keystring), strlen(keystring));
+    unsigned long key = hashmap_crc32_((unsigned char*)(keystring), strlen(keystring));
 
     /* Robert Jenkins' 32 bit Mix Function */
     key += (key << 12);
@@ -173,7 +173,7 @@ unsigned int Hashmap_hashInt_(Hashmap_t * m, char* keystring){
 * Return the integer of the location in data
 * to store the point to the item, or MAP_FULL.
 */
-int Hashmap_findLocationForKey_(Hashmap_t* m, char* key){
+int hashmap_findLocationForKey_(hashmap_t* m, char* key){
     int curr;
     int i;
 
@@ -181,7 +181,7 @@ int Hashmap_findLocationForKey_(Hashmap_t* m, char* key){
     if(m->size >= (m->table_size/2)) return MAP_FULL;
 
     /* Find the best index */
-    curr = Hashmap_hashInt_(m, key);
+    curr = hashmap_hashInt_(m, key);
 
     /* Linear probing */
     for(i = 0; i< MAX_CHAIN_LENGTH; i++){
@@ -200,14 +200,14 @@ int Hashmap_findLocationForKey_(Hashmap_t* m, char* key){
 /*
 * Doubles the size of the hashmap, and rehashes all the elements
 */
-int Hashmap_hash_(Hashmap_t* m){
+int hashmap_hash_(hashmap_t* m){
     int i;
     int old_size;
-    Hashmap_element* curr;
+    hashmap_element* curr;
 
     /* Setup the new elements */
-    Hashmap_element* temp = (Hashmap_element *)
-        calloc(2 * m->table_size, sizeof(Hashmap_element));
+    hashmap_element* temp = (hashmap_element *)
+        calloc(2 * m->table_size, sizeof(hashmap_element));
     if(!temp) return MAP_OMEM;
 
     /* Update the array */
@@ -226,7 +226,7 @@ int Hashmap_hash_(Hashmap_t* m){
         if (curr[i].in_use == 0)
             continue;
             
-        status = Hashmap_put(m, curr[i].key, curr[i].data);
+        status = hashmap_put(m, curr[i].key, curr[i].data);
         if (status != MAP_OK)
             return status;
     }
@@ -240,17 +240,17 @@ int Hashmap_hash_(Hashmap_t* m){
 /*############################*/
 
 
-int Hashmap_put(Hashmap_t* m, char* key, void* value){
+int hashmap_put(hashmap_t* m, char* key, void* value){
     int index;
     
     
     /* Find a place to put our value */
-    index = Hashmap_findLocationForKey_(m, key);
+    index = hashmap_findLocationForKey_(m, key);
     while(index == MAP_FULL){
-        if (Hashmap_hash_(m) == MAP_OMEM) {
+        if (hashmap_hash_(m) == MAP_OMEM) {
             return MAP_OMEM;
         }
-        index = Hashmap_findLocationForKey_(m, key);
+        index = hashmap_findLocationForKey_(m, key);
     }
 
     /* Set the data */
@@ -266,7 +266,7 @@ int Hashmap_put(Hashmap_t* m, char* key, void* value){
 /*
  * Get your pointer out of the hashmap with a key
  */
-void* Hashmap_at(Hashmap_t* m, char* key){
+void* hashmap_at(hashmap_t* m, char* key){
     int curr;
     int i;
 
@@ -274,7 +274,7 @@ void* Hashmap_at(Hashmap_t* m, char* key){
     void* value = NULL;
     
     /* Find data location */
-    curr = Hashmap_hashInt_(m, key);
+    curr = hashmap_hashInt_(m, key);
 
     /* Linear probing, if necessary */
     for(i = 0; i<MAX_CHAIN_LENGTH; i++){
@@ -296,11 +296,11 @@ void* Hashmap_at(Hashmap_t* m, char* key){
 
 
 
-int Hashmap_iterate(Hashmap_t* m, PFany f, void* item) {
+int hashmap_iterate(hashmap_t* m, PFany f, void* item) {
     int i;
 
     /* On empty hashmap, return immediately */
-    if (Hashmap_length(m) <= 0)
+    if (hashmap_length(m) <= 0)
         return MAP_MISSING;	
 
     /* Linear probing */
@@ -319,13 +319,13 @@ int Hashmap_iterate(Hashmap_t* m, PFany f, void* item) {
 /*
  * Remove an element with that key from the map
  */
-int Hashmap_remove(Hashmap_t* m, char* key){
+int hashmap_remove(hashmap_t* m, char* key){
     int i;
     int curr;
 
 
     /* Find key */
-    curr = Hashmap_hashInt_(m, key);
+    curr = hashmap_hashInt_(m, key);
 
     /* Linear probing, if necessary */
     for(i = 0; i<MAX_CHAIN_LENGTH; i++){
@@ -353,7 +353,7 @@ int Hashmap_remove(Hashmap_t* m, char* key){
 
 
 
-void Hashmap_free(Hashmap_t* m){
+void hashmap_free(hashmap_t* m){
     
     /* first we call free on all of the keys */
     for(int i = 0; i<m->table_size; i++)
@@ -366,18 +366,18 @@ void Hashmap_free(Hashmap_t* m){
 
 
 
-void Hashmap_freeAll(Hashmap_t* m){
+void hashmap_freeAll(hashmap_t* m){
     
     /* first we call free on all of the values */
     for(int i = 0; i<m->table_size; i++)
             free(m->data[i].data);
     
     /* Now we can actually delete the hashmap */
-    Hashmap_free(m);
+    hashmap_free(m);
 }
 
 
-int Hashmap_length(Hashmap_t* m){
+int hashmap_length(hashmap_t* m){
     if(m != NULL) 
         return m->size;
     else
@@ -385,16 +385,16 @@ int Hashmap_length(Hashmap_t* m){
 } 
 
 
-VecPtr_t*  Hashmap_keys(Hashmap_t* m){
+vector_t*  hashmap_keys(hashmap_t* m){
     
     int i;
 
-    VecPtr_t* out = VecPtr_new();
+    vector_t* out = vector_new();
     
     /* Linear probing */
     for(i = 0; i< m->table_size; i++)
         if(m->data[i].in_use != 0) 
-            VecPtr_push(out,strdup(m->data[i].key));
+            vector_push(out,strdup(m->data[i].key));
         
     
     return out;
@@ -403,16 +403,16 @@ VecPtr_t*  Hashmap_keys(Hashmap_t* m){
 
 
 
-VecPtr_t*  Hashmap_refsToKeys(Hashmap_t* m){
+vector_t*  hashmap_refsToKeys(hashmap_t* m){
     
     int i;
 
-    VecPtr_t* out = VecPtr_new();
+    vector_t* out = vector_new();
     
     /* Linear probing */
     for(i = 0; i< m->table_size; i++)
         if(m->data[i].in_use != 0) 
-            VecPtr_push(out,m->data[i].key);
+            vector_push(out,m->data[i].key);
         
     
     return out;

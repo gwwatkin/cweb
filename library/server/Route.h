@@ -2,7 +2,9 @@
 
 #include "Request.h"
 #include "Response.h"
+#include "AppKernel.h"
 #include "../vector/vector.h"
+
 
 
 typedef enum _HandlerReturnStatus_t
@@ -10,12 +12,11 @@ typedef enum _HandlerReturnStatus_t
     HANDLER_CONTINUE = 0,
     HANDLER_TERMINATE = 1,
     
-}HandlerReturnStatus_t;
+} HandlerReturnStatus_t;
 
 
 
-typedef HandlerReturnStatus_t (*handler)(Request_t*,Response_t*)
-    HandlerClosure_t;
+typedef HandlerReturnStatus_t (*HandlerClosure_t)(AppKernel_t*,Request_t*,Response_t*);
 
 
 
@@ -27,25 +28,29 @@ typedef struct _Route
     
     Method_t method;
     
-    //used to refernce
+    // Used to refernce
     char* name;
     
-    //executed if not NULL;
+    // Executed if not NULL;
     HandlerClosure_t handler; 
     
-    //if handler returns HANDLER_CONTINUE continue matching
+    // If handler returns HANDLER_CONTINUE continue matching the children.
     vector_t* subroutes; 
         
-    }
+
 }Route_t;
 
 
 
-Route_t* Route_new(char* path, Method_t method, char* name); 
+Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t handler); 
 
 
-void* Route_addSubroute(Route_t* this, Route_t* other_route);
+/** Passes memory management to parent */
+void Route_addSubroute(Route_t* this, Route_t* other_route);
 
+
+/** Display debug information */
+void Route_dump(Route_t* this);
 
 void Route_free(Route_t* this);
 

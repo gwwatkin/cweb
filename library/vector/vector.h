@@ -11,30 +11,30 @@
  */
 
 
-typedef struct VecPtr_ {
+typedef struct vector_ {
     void** data;
     int size;
     int count;
-} VecPtr_t;
+} vector_t;
 
-VecPtr_t* VecPtr_new();
+vector_t* vector_new();
 
-int VecPtr_lenght(VecPtr_t*);
+int vector_lenght(vector_t*);
 
-void VecPtr_push(VecPtr_t*, void*);
+void vector_push(vector_t*, void*);
 
-void VecPtr_set(VecPtr_t*, int, void*);
+void vector_set(vector_t*, int, void*);
 
-void *VecPtr_at(VecPtr_t*, int);
+void *vector_at(vector_t*, int);
 
-void VecPtr_remove(VecPtr_t*, int);
+void vector_remove(vector_t*, int);
 
-void VecPtr_free(VecPtr_t*);
+void vector_free(vector_t*);
 
 /**
- * Same as VecPtr_free, but allso cals free on all of its items.
+ * Same as vector_free, but also cals free on all of its items.
  */ 
-void VecPtr_freeAll(VecPtr_t*);
+void vector_freeAll(vector_t*);
 
 #endif 
  

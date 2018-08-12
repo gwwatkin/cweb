@@ -1,40 +1,67 @@
 #!/bin/bash
 
 
-# TODO make a makefile
 
-SOURCE_FILES='library/hashmap/Hashmap.c
-              library/hashmap/MapStrStr.c
-              library/vector/VecPtr.c
-              library/utils.c'
+#find . -type f -print0 | xargs -0 sed -i 's/VecPtr/vector/g'
 
 
-gcc -g -o bin/tests \
-    $SOURCE_FILES \
-    tests/test.c \
-    -pthread \
-    -Lonion
+PROGRAM_NAME="\\033[32m[run.sh]\\033[0m"
+
+
+
+$LIBRARY_SOURCES=" \
+    ./library/vector/vector.c \
+    ./library/hashmap/hashmap.c
+    ./library/server/AppKernel.c \
+    ./library/server/Route.c \
+    ./library/server/Request.c \
+    ./library/server/Response.c \
     
-echo "Running tests..."
+"
+
+MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
+
+TEST_SOURCES="$LIBRARY_SOURCES ./tests/test.c"
 
 
-./bin/tests
+ONION_SHARED=vendor/onion/build/src/onion/libonion.so;
 
-exit_code=$?
-
-
-if [ $exit_code -eq 0 ];
+# compile onion
+if [ "$1" = "compile-onion" ];
 then
-    echo "Tests successful"
-else
-    echo "Test failed, exited $exit_code"
+    echo -e "$PROGRAM_NAME Compiling libonion";
+
+    cd vendor/onion
+    mkdir build
+    cd build
+    cmake ..
+    make onion
+    cd ../../..
 fi
 
 
-gcc -g -o bin/main \
-    $SOURCE_FILES \
-    main.c \
-    -pthread \
-    -lonion
 
-./bin/main
+if [ "$1" = "" ];
+then
+
+
+    gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED $MAIN_SOURCES -Wall -o ./bin/main -lonion;
+
+
+    echo -e "$PROGRAM_NAME Running the executable";
+    ./bin/main;
+fi
+
+if [ "$1" = "test" ];
+then
+
+    gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED $TEST_SOURCES -Wall -o ./bin/tests -lonion;
+
+
+    echo -e "$PROGRAM_NAME Running the tests";
+    ./bin/tests;
+fi
+
+
+
+

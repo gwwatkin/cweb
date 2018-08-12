@@ -1,7 +1,7 @@
 #ifndef MAPSTRSTR_H
 #define MAPSTRSTR_H
 
-#include "../vector/VecPtr.h"
+#include "../vector/vector.h"
 
 typedef void MapStrStr_t;
 
@@ -62,7 +62,7 @@ int MapStrStr_length(MapStrStr_t* in);
 /**
  * Get a vector containing all the strings used as keys in the map
  */
-VecPtr_t* MapStrStr_key(MapStrStr_t* in);
+vector_t* MapStrStr_key(MapStrStr_t* in);
 
 
 /*
@@ -71,7 +71,7 @@ VecPtr_t* MapStrStr_key(MapStrStr_t* in);
  * The pointers returned are those that point directly to the key strings.
  * WARNING editing them will break the map, use for read only.
  */
-VecPtr_t* MapStrStr_refsToKeys(MapStrStr_t* in);
+vector_t* MapStrStr_refsToKeys(MapStrStr_t* in);
 
 
 /*

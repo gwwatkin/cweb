@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "VecPtr.h"
+#include "vector.h"
 
-VecPtr_t* VecPtr_new()
+vector_t* vector_new()
 {
-    VecPtr_t * v = malloc(sizeof(VecPtr_t));
+    vector_t * v = malloc(sizeof(vector_t));
     
     v->data = NULL;
     v->size = 0;
@@ -14,12 +14,12 @@ VecPtr_t* VecPtr_new()
     return v;
 }
 
-int VecPtr_lenght(VecPtr_t*v)
+int vector_lenght(vector_t*v)
 {
     return v->count;
 }
 
-void VecPtr_push(VecPtr_t *v, void *e)
+void vector_push(vector_t *v, void *e)
 {
     if (v->size == 0) {
         v->size = 10;
@@ -38,7 +38,7 @@ void VecPtr_push(VecPtr_t *v, void *e)
     v->count++;
 }
 
-void VecPtr_set(VecPtr_t *v, int index, void *e)
+void vector_set(vector_t *v, int index, void *e)
 {
     if (index >= v->count) {
         return;
@@ -47,7 +47,7 @@ void VecPtr_set(VecPtr_t *v, int index, void *e)
     v->data[index] = e;
 }
 
-void *VecPtr_at(VecPtr_t *v, int index)
+void *vector_at(vector_t *v, int index)
 {
     if (index >= v->count) {
         return NULL;
@@ -56,7 +56,7 @@ void *VecPtr_at(VecPtr_t *v, int index)
     return v->data[index];
 }
 
-void VecPtr_remove(VecPtr_t *v, int index)
+void vector_remove(vector_t *v, int index)
 {
     if (index >= v->count) {
         return;
@@ -80,20 +80,20 @@ void VecPtr_remove(VecPtr_t *v, int index)
     v->count--;
 }
 
-void VecPtr_free(VecPtr_t *v)
+void vector_free(vector_t *v)
 {
     free(v->data);
     free(v);
 }
 
 
-void VecPtr_freeAll(VecPtr_t *v)
+void vector_freeAll(vector_t *v)
 {
     for (int i = 0; i < v->count; i++)
         free(v->data[i]);
     
     
-    VecPtr_free(v);
+    vector_free(v);
 }
 
 

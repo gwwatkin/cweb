@@ -2,8 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <onion/onion.h>
+#include "vendor/onion/src/onion/onion.h"
+#include "vendor/onion/src/onion/request.h"
 
+
+#include "library/server/AppKernel.h"
+#include "library/server/Request.h"
+#include "library/server/Response.h"
 
 /*
  * 
@@ -24,11 +29,29 @@
 #define HOSTNAME "0.0.0.0"
 
 
-int simple_response_handler(void *private_data, onion_request *request, onion_response *response)
+
+
+
+
+
+
+
+
+
+int main_handler(void *private_data, onion_request *request, onion_response *response)
 {
+    const char* path = onion_request_get_path(request);
     
-    onion_response_printf(response,"hi");
+    printf("\e[32m[main_handler]\e[0m Starting AppKernel\n");
+    AppKernel_t* app = AppKernel_new(); 
     
+    
+    onion_response_printf(response,"%s\n",path);
+    
+    
+    
+    AppKernel_free(app); 
+    printf("\e[32m[main_handler]\e[0m Terminating AppKernel\n");
     
     return OCS_PROCESSED;
 }
@@ -43,13 +66,22 @@ int main(int argc,char *argv[])
     onion_set_port(server,PORT);
     
     
+    
+    
     onion_set_root_handler(
         server,
-        onion_handler_new((void *)simple_response_handler,NULL,NULL)
+        onion_handler_new(
+            (void *)main_handler,
+                NULL,
+                NULL // We don't need to free the kernel because it's the same 
+                     // for every request.
+        )
     );
     
     
+
     onion_listen(server);
+    
     onion_free(server);
     
 }
