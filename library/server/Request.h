@@ -20,8 +20,4 @@ typedef enum _Method_t
 
 
 
-typedef struct _Request
-{
-    
-    
-} Request_t;
+typedef struct _Request Request_t;

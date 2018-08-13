@@ -1,32 +1,76 @@
-#include <stdlib.h>
+#include <stdio.h>       
+#include <assert.h>
 #include <string.h>
 
-void str_replace(char * str, int len,char old, char new)
+void pindent(int indent)
 {
-    for(int i=0; i<len;i++)
-        if(str[i]==old)
-            str[i]=new;
-    
+    for(int i = 0; i<indent; i++)
+        putchar((int)'\t');
 }
 
 
-char* str_nullToSpace(char * str, int len)
-{
-    char* out = malloc(sizeof(char)*(len+1));
+void pretty_title(char* title){
     
-    strncpy(out,str,len);
-    out[len] = '\0';
+    //keep of the form 4*n+2 for optimal results
+    const int DEFAULT_WIDTH = 54;
     
-    str_replace(out,len,'\0',' ');
+    int len = strlen(title);
+    assert(len<DEFAULT_WIDTH-2);
     
-    return out;
+    
+    char tmp[DEFAULT_WIDTH-1];
+    strcpy(tmp,title);
+    
+    if(len%2) //if len is odd then we add a blank character ad the end
+    {
+        strcat(tmp," ");
+        len++;
+    }
+    
+    //print the upper line
+    putchar('+');
+    for(int i = 0;i<DEFAULT_WIDTH-2;i++)
+        putchar('-');
+    putchar('+');
+    putchar('\n');
+    
+    
+    
+    //print the middle line
+    
+    int bar_len = (DEFAULT_WIDTH - 4 - len)/2;
+    
+    putchar('|');
+    
+    for(int i = 0;i<bar_len;i++)
+    {
+        if(i%2)
+            putchar('-');
+        else
+            putchar('*');
+    }
+    
+    printf(" %s ", tmp);
+    
+    
+    for(int i = 0;i<bar_len;i++)
+    {
+        if(i%2)
+            putchar('*');
+        else
+            putchar('-');
+    }
+    
+    
+    putchar('|');
+    putchar('\n');
+
+    //print the lower line
+
+    putchar('+');
+    for(int i = 0;i<DEFAULT_WIDTH-2;i++)
+        putchar('-');
+    putchar('+');
+    putchar('\n');
 }
 
-
-void str_cleanNewline(char* line)
-{
-    int len = strlen(line);
-    if(len && line[len-1]=='\r')
-        line[len-1] = '\0';
-    
-}

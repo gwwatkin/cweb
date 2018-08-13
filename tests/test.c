@@ -15,16 +15,31 @@
 
 
 
+HandlerReturnStatus_t testHandler1(AppKernel_t* app, Request_t* req, Response_t* resp)
+{
+    printf("Running testHandler1\n");
+    
+    return HANDLER_CONTINUE;
+}
+
+
 
 int Route_unitTests()
 {
-    pretty_title("Route Unit tests");
-    
-    //CONTINUE HERE:
-    
-    Route_t* root = Route_new("/",GET,"index",);
+    pretty_title("Route Unit tests:\n");
     
     
+    printf("Creating a handler:\n");
+    Route_t* root = Route_new("/",GET,"index",&testHandler1);
+    
+    
+    printf("Printing it:\n");
+    Route_dump(root,0);
+    
+    printf("Freeing it:\n");
+    Route_free(root);
+
+    return 1;
 }
 
 
@@ -44,7 +59,7 @@ int main(){
 }
 
 
-
+/*
 int MapStrStr_unitTests()
 {
     
@@ -102,4 +117,4 @@ int MapStrStr_unitTests()
     
     return 0;
     
-}
+}*/
