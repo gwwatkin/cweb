@@ -54,7 +54,9 @@ void AppKernel_registerService(
     ServiceDeconstructorClosure_t deconstructor
 );
 
-
+/**
+ * Return NULL is the service is not registered or could not be initialized
+ */
 Service_t* AppKernel_getService(AppKernel_t* this, char* name);
 
 

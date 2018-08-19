@@ -19,7 +19,7 @@ typedef enum _HandlerReturnStatus_t
 
 
 
-typedef HandlerReturnStatus_t (*HandlerClosure_t)(AppKernel_t*,Request_t*,Response_t*);
+typedef HandlerReturnStatus_t (*HandlerClosure_t)(AppKernel_t*);
 
 
 

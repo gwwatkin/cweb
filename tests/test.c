@@ -33,6 +33,10 @@ int Route_unitTests()
     Route_t* root = Route_new("/",GET,"index",&testHandler1);
     
     
+    Route_t* a = Route_new("home",GET,"index",&testHandler1);
+    
+    Route_addSubroute(root,a);
+    
     printf("Printing it:\n");
     Route_dump(root,0);
     

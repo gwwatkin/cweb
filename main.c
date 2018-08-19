@@ -73,9 +73,8 @@ int main(int argc,char *argv[])
         onion_handler_new(
             (void *)main_handler,
                 NULL,
-                NULL // We don't need to free the kernel because it's the same 
-                     // for every request.
-        )
+                NULL 
+            )
     );
     
     

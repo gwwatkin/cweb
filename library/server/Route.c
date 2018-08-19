@@ -57,7 +57,9 @@ void Route_addSubroute(Route_t* this, Route_t* other_route)
 void Route_dump(Route_t* this,int indent)
 {
     pindent(indent);
-    printf("Route at <%lx>:\n{\n",(unsigned long) this);
+    printf("Route at <%lx>:\n",(unsigned long) this);
+    pindent(indent);
+    printf("{\n");
     indent++;
     pindent(indent);
     printf("path:%s\n",this->path);
@@ -71,10 +73,10 @@ void Route_dump(Route_t* this,int indent)
     printf("subroutes:\n");
     pindent(indent);
     printf("{\n");
-
+    indent++;
     for(int i = 0; i< vector_lenght(this->subroutes); i++)
         Route_dump(vector_at(this->subroutes,i),indent);
-    
+    indent--;
     pindent(indent);
     printf("}\n");
     
