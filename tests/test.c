@@ -15,9 +15,9 @@
 
 
 
-HandlerReturnStatus_t testHandler1(AppKernel_t* app, Request_t* req, Response_t* resp)
+HandlerReturnStatus_t testHandler1(AppKernel_t* app)
 {
-    printf("Running testHandler1\n");
+    printf("testHandler1 has been called\n");
     
     return HANDLER_CONTINUE;
 }
@@ -29,7 +29,9 @@ int Route_unitTests()
     pretty_title("Route Unit tests:\n");
     
     
-    printf("Creating a handler:\n");
+    
+    
+    printf("Creating a Route.\n");
     Route_t* root = Route_new("/",GET,"index",&testHandler1);
     
     
@@ -39,8 +41,21 @@ int Route_unitTests()
     
     printf("Printing it:\n");
     Route_dump(root,0);
+
     
-    printf("Freeing it:\n");
+    
+    printf("Creating a kernel.\n");
+    AppKernel_t* app = AppKernel_new();
+    
+    printf("Running the handler.\n");
+    Route_handle(root,app);
+    
+    printf("Freing the kernel.\n");
+    AppKernel_free(app);
+    
+    
+    
+    printf("Freeing the route.\n");
     Route_free(root);
 
     return 1;

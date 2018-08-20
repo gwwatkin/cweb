@@ -23,8 +23,9 @@ struct _Route_t
     
     // If handler returns HANDLER_CONTINUE continue matching the children.
     vector_t* subroutes; 
-        
-
+    
+    //implement fallback.
+    HandlerClosure_t fallback_handler; 
 };
 
 
@@ -45,11 +46,73 @@ Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t han
 }
 
 
+
+
+HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri)
+{
+    HandlerReturnStatus_t ret;
+    Route_t* subroute = NULL;
+    
+    ret = Route_handleThis(this,app);
+    if(ret != HANDLER_CONTINUE)
+        return HADNLER_HANDLED;
+
+    
+    
+    
+    //find the first matching subroute, consume the uri string and continue
+    int len = vector_lenght(this->subroutes);
+    for(int i= 0; i<len; i++)
+    {
+        subroute = vector_at(this->subroutes,i);
+        
+        //if subroute matches stop
+        if( strlen(uri)>=strlen(subroute->path)
+            && strncmp(subroute->path, uri, strlen(subroute->path))!=0
+          )
+        {
+            //consume the uri string
+            uri += strlen(subroute->path);
+            ret =  Route_handle(subroute, app, uri);
+            
+            if(ret == HANDLER_NOT_FOUND)
+                // Means that there was no fallback in the subroutes, this 
+                // tells us that we have to call it now.
+                subroute = NULL;
+                
+            
+            else
+                assert(ret == HANDLER_HANDLED);
+                //continue by making sure that this is correct.
+                //possibly refactor
+            break;
+        }
+    }
+    
+    if(subroute == NULL)
+    {
+        if(this->fallback_handler == NULL)
+            return HANDLER_NOT_FOUND;
+        
+        (this->fallback_handler)(app);
+    }
+    
+    
+    return HANDLER_HANDLED;
+}
+
+
+
+HandlerReturnStatus_t Route_handleThis(Route_t* this, AppKernel_t* app)
+{
+    return (*this->handler)(app);
+}
+
+
+
 void Route_addSubroute(Route_t* this, Route_t* other_route)
 {
-    
     vector_push(this->subroutes,other_route);
-    
 }
 
 
