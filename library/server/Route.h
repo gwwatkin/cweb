@@ -42,7 +42,13 @@ typedef struct _Route_t Route_t;
 
 
 
-Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t handler); 
+Route_t* Route_new(
+    char* path, 
+    Method_t method,
+    char* name,
+    HandlerClosure_t handler,
+    FallbackHandlerClosure_t fallback_handler
+);
 
 
 /** 
@@ -66,19 +72,17 @@ void Route_addSubroute(Route_t* this, Route_t* other_route);
 
 
 
+/** Display debug information */
+void Route_dump(Route_t* this,int indent);
 
-/** 
- * Fallback route is called when the URI is not found.
- * If not set then the parent's fallback handler is called.
- */ 
-void Route_setFallback(Route_t* this,FallbackHandlerClosure_t fallback_handler);
 
+
+void Route_free(Route_t* this);
 
 
 
 
 /** private methods */
-
 
 
 
@@ -95,18 +99,8 @@ HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,char
 
 
 /** 
- * Called when a handler returns a status different from HANDLER_CONTINUE or HANDLER_HANDLED
+ * Called when a handler returns a status different from HANDLER_CONTINUE or HANDLER_HANDLED.
  */
 HandlerReturnStatus_t Route_runFallBack_(Route_t* this,AppKernel_t* app ,HandlerReturnStatus_t status);
-
-
-/** Display debug information */
-void Route_dump(Route_t* this,int indent);
-
-
-
-void Route_free(Route_t* this);
-
-
 
 

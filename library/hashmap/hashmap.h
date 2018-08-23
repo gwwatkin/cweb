@@ -1,5 +1,4 @@
-#ifndef __HASHMAP_H__
-#define __HASHMAP_H__
+#pragma once
 
 /*
  * A Simple hashmap implementation.
@@ -11,7 +10,7 @@
  * 
  */
 
-
+#include "../vector/vector.h"
 
 
 
@@ -38,9 +37,6 @@ typedef struct _hashmap_t{
 
 
 
-
-
-#include "../vector/vector.h"
 
 
 
@@ -100,7 +96,7 @@ void* hashmap_at(hashmap_t* m, char* key);
 /*
  * Get any element. Return MAP_OK or MAP_MISSING.
  * remove - should the element be removed from the hashmap
- * TODO find out whhy this is missing
+ * TODO find out why this is missing
  */
 /* int hashmap_get_one(hashmap_t * in, void * *arg, int remove); */
 
@@ -135,7 +131,10 @@ vector_t* hashmap_keys(hashmap_t* m);
  * 
  * WARNING editing the strings will break the hashmap.
  */
-vector_t*  hashmap_refsToKeys(hashmap_t* m);
+vector_t*  hashmap_keysRef(hashmap_t* m);
+
+    
 
 
-#endif // __HASHMAP_H__ 
+
+

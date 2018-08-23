@@ -71,12 +71,4 @@ int Array_lenght(Array_t* arr);
 void Array_destroy(Array_t* arr);
 
 
-/* A simple macro for the very common array pattern
- * NOTE: make sure to use a valid c identifier for value
- */
-#define foreach(array,value)                                                         \
-for(int (value)__I_i = 0,  Value_t* (value) = Array_at(array,(value)__I_i );         \
-        (value)__I_i < Array_lenght(array);                                          \
-        (value) = Array_at(array,++(value)__I_i)
 
-#endif

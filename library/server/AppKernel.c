@@ -1,25 +1,17 @@
 #include "AppKernel.h"
 
-
-#include "../hashmap/hashmap.h"
-
 #include <stdlib.h>
 #include <string.h>
 
-
+#include "../hashmap/hashmap.h"
 
 struct _ServiceHolder_t{
-
-    char is_initialized;
     
-    union{
-        Service_t* service_object;
+    Service_t* service_object;
+    
         
-        struct{
-            ServiceConstructorClosure_t constructor;
-            void* constructor_parameters;
-        };
-    };
+    ServiceConstructorClosure_t constructor;
+    void* constructor_parameters;
     
     ServiceDeconstructorClosure_t deconstructor;
 };
@@ -55,7 +47,6 @@ void AppKernel_registerService(
 {
     ServiceHolder_t* holder = malloc(sizeof(ServiceHolder_t));
     
-    holder->is_initialized = 0;
     holder->constructor_parameters = constructor_parameters;
     holder->deconstructor = deconstructor;
     
@@ -67,33 +58,48 @@ void AppKernel_registerService(
 
 
 
-Service_t * AppKernel_getService(AppKernel_t* this, char* name)
+Service_t* AppKernel_getService(AppKernel_t* this, char* name)
 {
     ServiceHolder_t* holder = hashmap_at(this->service_holders,name);
     if(holder== NULL)
         return NULL;
     
-    if(!holder->is_initialized)
-    {
-        Service_t* service_object  =
+    if(!holder->service_object)
+        holder->service_object  =
             (*holder->constructor)(holder->constructor_parameters);
-    
-        if(service_object == NULL)
-            return NULL;
-        
-        holder->service_object = service_object;
-    }
-   
         
     return holder->service_object;
 }
 
 
 
+void AppKernel_freeService(AppKernel_t* this,char* name)
+{
+    ServiceHolder_t* holder = AppKernel_getService(this,name);
+    
+    if(holder)
+        (holder->deconstructor)(holder->service_object,holder->constructor_parameters);
+    
+    free(holder);
+    
+    hashmap_remove(this->service_holders,name);
+}
+
 
 void AppKernel_free(AppKernel_t* this)
 {
-    //free all services by calling their own deconstructor on them.
+    int i;
+    char* service_name;
+    
+    
+    //free all services by calling their deconstructor.
+    vector_t* keys = hashmap_keysRef(this->service_holders);
+    foreach(keys,i,service_name)
+        AppKernel_freeService(this,service_name);
+    
+    vector_free(keys);
+    
+    hashmap_free(this->service_holders);
     
     free(this);
 }

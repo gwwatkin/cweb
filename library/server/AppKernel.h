@@ -41,7 +41,16 @@ AppKernel_t* AppKernel_new();
 
 
 typedef Service_t* (*ServiceConstructorClosure_t)(void*);
-typedef void (*ServiceDeconstructorClosure_t)(Service_t*);
+
+
+
+/**
+ * Frees both the object and the constructor parameters.
+ * This should be able to handle the case when the service is not yet 
+ * initialized (i.e. the pointer is still null)
+ */
+typedef void (*ServiceDeconstructorClosure_t)(Service_t*,void*);
+
 
 /**
  * A service is not initialized untill it's actually used
@@ -59,6 +68,12 @@ void AppKernel_registerService(
  */
 Service_t* AppKernel_getService(AppKernel_t* this, char* name);
 
+
+/**
+ * Deconstruct a service with the given name and, if needed, the parameters
+ * passed to the constructor as well.
+ */
+void AppKernel_freeService(AppKernel_t* this,char* name);
 
 
 

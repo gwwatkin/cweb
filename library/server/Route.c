@@ -32,7 +32,13 @@ struct _Route_t
 
 
 
-Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t handler)
+Route_t* Route_new(
+    char* path, 
+    Method_t method,
+    char* name,
+    HandlerClosure_t handler,
+    FallbackHandlerClosure_t fallback_handler
+)
 {
     Route_t* this = malloc(sizeof(Route_t));
     
@@ -40,6 +46,7 @@ Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t han
     this->method = method;
     this->name = strdup(name);
     this->handler = handler;
+    this->fallback_handler = fallback_handler;
     
     this->subroutes = vector_new();
     
@@ -56,10 +63,7 @@ void Route_addSubroute(Route_t* this, Route_t* other_route)
 
 
 
-void Route_setFallback(Route_t* this, FallbackHandlerClosure_t fallback_handler)
-{
-    this->fallback_handler = fallback_handler;
-}
+
 
 
 
@@ -98,12 +102,12 @@ HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri)
 HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,char* uri)
 {
     HandlerReturnStatus_t ret;
-    
-    int len = vector_lenght(this->subroutes);
-    for(int i= 0; i<len; i++)
-    {
-        Route_t* subroute = vector_at(this->subroutes,i);
+    int i;
+    Route_t* subroute;
 
+
+    foreach(this->subroutes,i,subroute)
+    {
         //consume the uri string
         ret =  Route_handle(subroute, app, uri);
         

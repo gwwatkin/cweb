@@ -403,7 +403,7 @@ vector_t*  hashmap_keys(hashmap_t* m){
 
 
 
-vector_t*  hashmap_refsToKeys(hashmap_t* m){
+vector_t*  hashmap_keysRef(hashmap_t* m){
     
     int i;
 
