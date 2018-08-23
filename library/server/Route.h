@@ -12,10 +12,16 @@
 
 typedef enum _HandlerReturnStatus_t
 {
-    HANDLER_CONTINUE = 0,
-    HANDLER_TERMINATE = 1,
-    HANDLER_HANDLED = 3,
-    HANDLER_NOT_FOUND = 4,
+    
+    HANDLER_HANDLED = 0,
+    
+    HANDLER_CONTINUE = 1,
+    
+    HANDLER_ABORT = 2,
+    
+    HANDLER_NOT_FOUND = 3,
+    
+    HANDLER_NO_MATCH = 4,
     
 } HandlerReturnStatus_t;
 
@@ -23,7 +29,7 @@ typedef enum _HandlerReturnStatus_t
 
 typedef HandlerReturnStatus_t (*HandlerClosure_t)(AppKernel_t*);
 
-
+typedef HandlerReturnStatus_t (*FallbackHandlerClosure_t)(AppKernel_t*,HandlerReturnStatus_t);
 
 
 /**
@@ -38,11 +44,17 @@ typedef struct _Route_t Route_t;
 
 Route_t* Route_new(char* path, Method_t method, char* name, HandlerClosure_t handler); 
 
+
 /** 
- * Fallback route is called when the URI is not found.
- * If not set then the parent's fallback handler is called.
- */ 
-void Route_setFallback(Route_t* this,HandlerClosure_t fallback_handler);
+ * Call all the handlers that are in the path specified by the uri as long as
+ * they return HANDLER_CONTINUE.
+ * 
+ * If another staus is returned, or no matching handler is found, the fallback handler
+ * is called with, the status returned by the unsucessful handler or HANDLER_NOT_FOUND
+ * respectively.
+ */
+HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri);
+
 
 
 /** 
@@ -52,19 +64,40 @@ void Route_setFallback(Route_t* this,HandlerClosure_t fallback_handler);
 void Route_addSubroute(Route_t* this, Route_t* other_route);
 
 
+
+
+
 /** 
- * Call all the handler that are in the path specified by the URI.
- * 
- * If the return status is HANDLER_NOT_FOUND, no handler ha
- * 
- * When fallback is called it returns HANDLER_HANDLED.
+ * Fallback route is called when the URI is not found.
+ * If not set then the parent's fallback handler is called.
+ */ 
+void Route_setFallback(Route_t* this,FallbackHandlerClosure_t fallback_handler);
+
+
+
+
+
+/** private methods */
+
+
+
+
+/** 
+ * Call this route's handler, if no handler was specified return handler continue.
  */
-HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri);
+HandlerReturnStatus_t Route_handleThis_(Route_t* this, AppKernel_t* app);
 
 
+/**
+ * Same as Route_handle, but ignore the current node.
+ */
+HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,char* uri);
 
-/** Call this route's handler */
-HandlerReturnStatus_t Route_handleThis(Route_t* this, AppKernel_t* app);
+
+/** 
+ * Called when a handler returns a status different from HANDLER_CONTINUE or HANDLER_HANDLED
+ */
+HandlerReturnStatus_t Route_runFallBack_(Route_t* this,AppKernel_t* app ,HandlerReturnStatus_t status);
 
 
 /** Display debug information */

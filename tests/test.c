@@ -17,9 +17,19 @@
 
 HandlerReturnStatus_t testHandler1(AppKernel_t* app)
 {
-    printf("testHandler1 has been called\n");
+    printf("testHandler1 has been called!\n");
     
     return HANDLER_CONTINUE;
+}
+
+
+
+HandlerReturnStatus_t fallbackHandler1(AppKernel_t* app,HandlerReturnStatus_t status)
+{
+     printf("fallbackHandler1 has been called ");
+     printf("with status %i\n",status);
+     
+     return HANDLER_HANDLED;
 }
 
 
@@ -32,23 +42,23 @@ int Route_unitTests()
     
     
     printf("Creating a Route.\n");
-    Route_t* root = Route_new("/",GET,"index",&testHandler1);
+    Route_t* root = Route_new("",GET,"index",&testHandler1);
     
     
-    Route_t* a = Route_new("home",GET,"index",&testHandler1);
+    Route_t* a = Route_new("cadabra",GET,"index",&testHandler1);
     
     Route_addSubroute(root,a);
+    Route_setFallback(root,fallbackHandler1);
     
     printf("Printing it:\n");
     Route_dump(root,0);
 
     
-    
     printf("Creating a kernel.\n");
     AppKernel_t* app = AppKernel_new();
     
     printf("Running the handler.\n");
-    Route_handle(root,app);
+    Route_handle(root,app,"cadabra");
     
     printf("Freing the kernel.\n");
     AppKernel_free(app);
