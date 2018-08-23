@@ -1,5 +1,4 @@
-#ifndef VECTOR_H__
-#define VECTOR_H__
+#pragma once
 
 
 /**
@@ -36,5 +35,20 @@ void vector_free(vector_t*);
  */ 
 void vector_freeAll(vector_t*);
 
-#endif 
- 
+
+/* A simple macro for the very common array pattern
+ * NOTE: make sure to declare the identifiers before hand
+ */
+#define foreach(vector,index,value)         \
+for(                                        \
+    value = vector_at(vector,index=0);      \
+    index< vector_lenght(vector);           \
+    value = vector_at(vector,++index)       \
+)
+
+
+
+
+
+
+
