@@ -5,7 +5,6 @@
 
 
 #include "../../vendor/onion/src/onion/onion.h"
-#include "../../vendor/onion/src/onion/request.h"
 
 
 
@@ -21,33 +20,34 @@ struct _Server_t {
 
 
 
-// Server_t* Server_new(char* host, char* port, EntryPointClosure_t entry_point)
-// {
-//     Server_t* server = malloc(sizeof(Server_t));
-//     
-//     server->port = strdup(port);
-//     server->hostname = strdup(hostname);
-//     
-//     return server;
-// }
-// 
-// 
-// void ServerFree(Server_t* this)
-// {
-//     free(this->port);
-//     
-//     free(this->hostname);
-//     
-//     free(this);
-// }
+Server_t* Server_new(char* host, char* port, EntryPointClosure_t entry_point)
+{
+    Server_t* server = malloc(sizeof(Server_t));
+    
+    server->port = strdup(port);
+    server->hostname = strdup(hostname);
+    
+    return server;
+}
+
+
+void ServerFree(Server_t* this)
+{
+    free(this->port);
+    
+    free(this->hostname);
+    
+    free(this);
+}
 
 
 
 
 static onion_connection_status runEntryPoint_(
     void* server,
-    onion_request* req,
-    onion_response* resp);
+    onion_request* o_request,
+    onion_response* o_response
+);
 
 void Server_listen(Server_t* this)
 {
@@ -76,16 +76,21 @@ void Server_listen(Server_t* this)
 
 onion_connection_status runEntryPoint_(
     void* server,
-    onion_request* req,
-    onion_response* resp)
+    onion_request* o_request,
+    onion_response* o_response)
 {
     Server_t* this = (Server_t*) server;
     
     //convert an onion request to a Request type;
+    Request_t* request = Request_fromOnion(o_request,1);
+    
+    
+    Response_t* response = NULL;
     
     //call the entry entry
+    (*this->entry_point)(
     
-    //convert the Response to an onion response
+    //write the response to the onion response object
     
     //write it out.
     

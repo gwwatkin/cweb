@@ -9,7 +9,7 @@
 typedef struct _Server_t Server_t;
 
 
-typedef Response_t* (*EntryPointClosure_t)(Request_t*);
+typedef void (*EntryPointClosure_t)(Request_t*,Response_t*);
 
 
 Server_t* Server_new(char* host, char* port, EntryPointClosure_t entry_point);
