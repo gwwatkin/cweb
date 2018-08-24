@@ -9,6 +9,7 @@
 #include "library/server/AppKernel.h"
 #include "library/server/Request.h"
 #include "library/server/Response.h"
+#include "library/server/Server.h"
 
 /*
  * 
@@ -52,8 +53,25 @@ int main_handler(void *private_data, onion_request *request, onion_response *res
 
 
 
+void main_entry_point(Request_t* req, Response_t* resp)
+{
+    Response_setBody(resp,"hi\n\n",3);
+}
+    
+    
+int main (int argc,char *argv[])
+{
+    Server_t* server= Server_new("0.0.0.0","3000",&main_entry_point);
+    
+    Server_listen(server);
+    Server_free(server);
+    
+    
+    return 0;
+}
 
-int main(int argc,char *argv[])
+
+int main_old(int argc,char *argv[])
 {
     onion* o = onion_new(O_POOL);
     onion_set_hostname(o, HOSTNAME);
@@ -77,6 +95,7 @@ int main(int argc,char *argv[])
     
     onion_free(o);
     
+    return 0;
 }
 
 

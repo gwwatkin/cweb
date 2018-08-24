@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include "../../vendor/onion/src/onion/request.h"
+
 struct _Request_t {
     
     onion_request* o_request;

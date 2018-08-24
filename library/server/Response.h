@@ -7,8 +7,13 @@ typedef struct _Response_t Response_t;
 
 Response_t* Response_new();
 
-void Response_free();
+void Response_free(Response_t* this);
 
-void Response_writeToOnion(onion_response* o_response);
+/**
+ * copies the body
+ */
+void Response_setBody(Response_t* this, char* body,int body_size);
+
+void Response_writeToOnion(Response_t* this, onion_response* o_response);
 
 

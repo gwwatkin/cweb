@@ -20,18 +20,19 @@ struct _Server_t {
 
 
 
-Server_t* Server_new(char* host, char* port, EntryPointClosure_t entry_point)
+Server_t* Server_new(char* hostname, char* port, EntryPointClosure_t entry_point)
 {
     Server_t* server = malloc(sizeof(Server_t));
     
     server->port = strdup(port);
     server->hostname = strdup(hostname);
+    server->entry_point = entry_point;
     
     return server;
 }
 
 
-void ServerFree(Server_t* this)
+void Server_free(Server_t* this)
 {
     free(this->port);
     
@@ -85,14 +86,13 @@ onion_connection_status runEntryPoint_(
     Request_t* request = Request_fromOnion(o_request,1);
     
     
-    Response_t* response = NULL;
+    Response_t* response = Response_new();
     
-    //call the entry entry
-    (*this->entry_point)(
+    //call the entry point
+    (*this->entry_point)(request,response);
     
     //write the response to the onion response object
-    
-    //write it out.
+    Response_writeToOnion(response,o_response);
     
     return OCS_PROCESSED;
 }

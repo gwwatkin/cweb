@@ -21,6 +21,7 @@ LIBRARY_SOURCES=" \
     ./library/server/Route.c \
     ./library/server/Request.c \
     ./library/server/Response.c \
+    ./library/server/Server.c \
 "
 
 MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
