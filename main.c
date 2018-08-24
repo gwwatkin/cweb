@@ -32,12 +32,6 @@
 
 
 
-
-
-
-
-
-
 int main_handler(void *private_data, onion_request *request, onion_response *response)
 {
     const char* path = onion_request_get_path(request);
@@ -61,15 +55,15 @@ int main_handler(void *private_data, onion_request *request, onion_response *res
 
 int main(int argc,char *argv[])
 {
-    onion* server = onion_new(O_POOL);
-    onion_set_hostname(server, HOSTNAME);
-    onion_set_port(server,PORT);
+    onion* o = onion_new(O_POOL);
+    onion_set_hostname(o, HOSTNAME);
+    onion_set_port(o,PORT);
     
     
     
     
     onion_set_root_handler(
-        server,
+        o,
         onion_handler_new(
             (void *)main_handler,
                 NULL,
@@ -79,9 +73,9 @@ int main(int argc,char *argv[])
     
     
 
-    onion_listen(server);
+    onion_listen(o);
     
-    onion_free(server);
+    onion_free(o);
     
 }
 
