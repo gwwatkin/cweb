@@ -72,11 +72,20 @@ static void entry_point_for_app(EntryPointArgs_t* args_,Request_t* request, Resp
     
     // Register the request and the response in the kernel
     
-//     AppKernel_registerService(
-//         args->kernel,
-//         "request",
-//         
-//     );
+    AppKernel_setService(
+        args->kernel,
+        "request",
+        request,
+        NULL
+    );
     
+    AppKernel_setService(
+        args->kernel,
+        "response",
+        response,
+        NULL
+    );
+
+
     Route_handle(args->root,args->kernel,uri);
 }

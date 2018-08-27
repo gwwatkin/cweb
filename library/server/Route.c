@@ -79,18 +79,23 @@ HandlerReturnStatus_t Route_runFallBack_(Route_t* this, AppKernel_t* app, Handle
 
 HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, const char* uri)
 {
-    if( strlen(uri)<strlen(this->path)
-        || strncmp(this->path, uri, strlen(this->path))!=0
-      )
+    //if the url is shorter than the path then for sure there is no match.
+    if( strlen(uri)<strlen(this->path)) 
         return HANDLER_NO_MATCH;
+    
+    //the strings are different
+    if(strncmp(this->path, uri, strlen(this->path))!=0)
+        return HANDLER_NO_MATCH;
+    
+    
     
     HandlerReturnStatus_t current_node_return_status = Route_handleThis_(this,app);
 
-    if(strlen(uri)>0 && current_node_return_status==HANDLER_CONTINUE)
+    if(current_node_return_status==HANDLER_CONTINUE)
     {
         // The uri is not entirely consumed and we can continue.
         // Find the first matching subroute, consume the uri string and continue.
-        Route_passToSubroutes_(this,app,uri);
+        current_node_return_status = Route_passToSubroutes_(this,app,uri);
     }
     
     return current_node_return_status;

@@ -6,7 +6,6 @@
 
 struct _Request_t {
     
-    //deallocation not managed
     onion_request* o_request;
     int o_request_free;
 };

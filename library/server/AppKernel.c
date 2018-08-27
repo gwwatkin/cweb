@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+//debug
+#include <stdio.h>
+
+
 #include "../hashmap/hashmap.h"
 
 struct _ServiceHolder_t{
@@ -88,7 +92,7 @@ Service_t* AppKernel_getService(AppKernel_t* this, char* name)
 
 void AppKernel_freeService(AppKernel_t* this,char* name)
 {
-    ServiceHolder_t* holder = AppKernel_getService(this,name);
+    ServiceHolder_t* holder = hashmap_at(this->service_holders,name);
     
     if(holder==NULL)
         return;
