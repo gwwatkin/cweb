@@ -6,6 +6,7 @@
 
 struct _Request_t {
     
+    //deallocation not managed
     onion_request* o_request;
     int o_request_free;
 };
@@ -35,9 +36,6 @@ void Request_free(Request_t* this)
     //maybe there should be a macro for this...
     if(this == NULL)
         return;
-    
-    if(this->o_request_free)
-        onion_request_free(this->o_request);
     
     free(this);
 }

@@ -59,7 +59,7 @@ Route_t* Route_new(
  * is called with, the status returned by the unsucessful handler or HANDLER_NOT_FOUND
  * respectively.
  */
-HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri);
+HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, const char* uri);
 
 
 
@@ -95,7 +95,7 @@ HandlerReturnStatus_t Route_handleThis_(Route_t* this, AppKernel_t* app);
 /**
  * Same as Route_handle, but ignore the current node.
  */
-HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,char* uri);
+HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,const char* uri);
 
 
 /** 

@@ -2,11 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "vendor/onion/src/onion/onion.h"
-#include "vendor/onion/src/onion/request.h"
-
 
 #include "library/server/AppKernel.h"
+#include "library/server/App.h"
 #include "library/server/Request.h"
 #include "library/server/Response.h"
 #include "library/server/Server.h"
@@ -25,75 +23,53 @@
 
 
 
-#define PORT "3000"
 
 #define HOSTNAME "0.0.0.0"
 
 
-
-
-
-int main_handler(void *private_data, onion_request *request, onion_response *response)
+HandlerReturnStatus_t say_hello(AppKernel_t*k)
 {
-    const char* path = onion_request_get_path(request);
+    printf("say_hello called\n");
     
-    printf("\e[32m[main_handler]\e[0m Starting AppKernel\n");
-    AppKernel_t* app = AppKernel_new(); 
-    
-    
-    onion_response_printf(response,"%s\n",path);
-    
-    
-    
-    AppKernel_free(app); 
-    printf("\e[32m[main_handler]\e[0m Terminating AppKernel\n");
-    
-    return OCS_PROCESSED;
+    return HANDLER_HANDLED;
 }
 
 
 
-void main_entry_point(Request_t* req, Response_t* resp)
+Route_t* make_dummy_root()
 {
-    Response_setBody(resp,"hi\n\n",3);
+    Route_t* root = Route_new("",GET,"say_hello",say_hello,NULL);
+    
+    return root;
 }
     
     
 int main (int argc,char *argv[])
 {
-    Server_t* server= Server_new("0.0.0.0","3000",&main_entry_point);
+    if(argc <2)
+    {
+        printf("Please specify a port\n");
+        return 1;
+    }
+        
+    char* port = argv[1];
     
-    Server_listen(server);
+    Server_t* server= Server_new(HOSTNAME,port);
+    
+    AppKernel_t* kernel = AppKernel_new();
+    
+    App_t* app = App_new(kernel,0);
+    
+    Route_t* root = make_dummy_root();
+    
+    App_serve(app,server,root);
+    
+    
     Server_free(server);
+    AppKernel_free(kernel);
+    App_free(app);
+    Route_free(root);
     
-    
-    return 0;
-}
-
-
-int main_old(int argc,char *argv[])
-{
-    onion* o = onion_new(O_POOL);
-    onion_set_hostname(o, HOSTNAME);
-    onion_set_port(o,PORT);
-    
-    
-    
-    
-    onion_set_root_handler(
-        o,
-        onion_handler_new(
-            (void *)main_handler,
-                NULL,
-                NULL 
-            )
-    );
-    
-    
-
-    onion_listen(o);
-    
-    onion_free(o);
     
     return 0;
 }

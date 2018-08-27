@@ -77,7 +77,7 @@ HandlerReturnStatus_t Route_runFallBack_(Route_t* this, AppKernel_t* app, Handle
 
 
 
-HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri)
+HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, const char* uri)
 {
     if( strlen(uri)<strlen(this->path)
         || strncmp(this->path, uri, strlen(this->path))!=0
@@ -99,7 +99,7 @@ HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, char* uri)
 
 
 
-HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,char* uri)
+HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,const char* uri)
 {
     HandlerReturnStatus_t ret;
     int i;

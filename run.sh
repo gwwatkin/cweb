@@ -22,6 +22,7 @@ LIBRARY_SOURCES=" \
     ./library/server/Request.c \
     ./library/server/Response.c \
     ./library/server/Server.c \
+    ./library/server/App.c \
 "
 
 MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
@@ -54,7 +55,7 @@ then
 
 
     echo -e "$PROGRAM_NAME Running the executable";
-    ./bin/main;
+    ./bin/main 3000;
 fi
 
 if [ "$1" = "test" ];
