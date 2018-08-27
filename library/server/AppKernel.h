@@ -53,7 +53,21 @@ typedef void (*ServiceDeconstructorClosure_t)(Service_t*,void*);
 
 
 /**
- * A service is not initialized untill it's actually used
+ * Set a service in the kernel with it's deconstructor, if deconstructor is
+ * NULL, then nothing is called
+ */
+void AppKernel_setService(
+    AppKernel_t* this,
+    char* name,
+    Service_t* service,
+    ServiceDeconstructorClosure_t deconstructor
+);
+
+
+
+
+/**
+ * same as above but a service is not initialized untill it's actually used.
  */
 void AppKernel_registerService(
     AppKernel_t* this,
@@ -64,7 +78,7 @@ void AppKernel_registerService(
 );
 
 /**
- * Return NULL is the service is not registered or could not be initialized
+ * Return NULL is the service is not set or could not be initialized
  */
 Service_t* AppKernel_getService(AppKernel_t* this, char* name);
 
@@ -78,6 +92,6 @@ void AppKernel_freeService(AppKernel_t* this,char* name);
 
 
 /**
- * When this is called all registered services are also terminated.
+ * When this is called all services are also terminated.
  */
 void AppKernel_free(AppKernel_t* this);

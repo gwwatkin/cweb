@@ -35,7 +35,20 @@ AppKernel_t* AppKernel_new()
 
 
 
-//continue here by implementing the missing methods
+void AppKernel_setService(
+    AppKernel_t* this,
+    char* name,
+    Service_t* service,
+    ServiceDeconstructorClosure_t deconstructor)
+{
+    ServiceHolder_t* holder = malloc(sizeof(ServiceHolder_t));
+    holder->service_object = service;
+    holder->deconstructor = deconstructor;
+    
+    hashmap_put(this->service_holders,name,holder);
+}
+
+
 
 void AppKernel_registerService(
     AppKernel_t* this,
@@ -50,7 +63,7 @@ void AppKernel_registerService(
     holder->constructor_parameters = constructor_parameters;
     holder->deconstructor = deconstructor;
     
-    hashmap_put(this->service_holders,strdup(name),holder);
+    hashmap_put(this->service_holders,name,holder);
     
 }
 
@@ -77,7 +90,10 @@ void AppKernel_freeService(AppKernel_t* this,char* name)
 {
     ServiceHolder_t* holder = AppKernel_getService(this,name);
     
-    if(holder)
+    if(holder==NULL)
+        return;
+    
+    if(holder->deconstructor)
         (holder->deconstructor)(holder->service_object,holder->constructor_parameters);
     
     free(holder);

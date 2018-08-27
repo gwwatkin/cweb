@@ -9,6 +9,8 @@
 
 
 
+
+
 struct _Server_t {
     
     char* port;
@@ -19,6 +21,28 @@ struct _Server_t {
     EntryPointClosure_t entry_point;
     EntryPointArgs_t* entry_point_args;
 };
+
+
+
+/* BEGIN Private methods */
+
+
+
+/**
+ * This is a helper function that wraps the entry point.
+ * It allows for the onion request and response objects to be converted to 
+ * Request_t and Response_t types.
+ */
+static onion_connection_status runEntryPoint_(
+    void* server,
+    onion_request* o_request,
+    onion_response* o_response
+);
+
+
+
+/*END Private methods*/
+
 
 
 
@@ -55,17 +79,6 @@ void Server_setEntryPoint(Server_t* this,EntryPointClosure_t entry_point, EntryP
 }
 
 
-
-/**
- * This is a helper function that wraps the entry point.
- * It allows for the onion request and response objects to be converted to 
- * Request_t and Response_t types.
- */
-static onion_connection_status runEntryPoint_(
-    void* server,
-    onion_request* o_request,
-    onion_response* o_response
-);
 
 void Server_listen(Server_t* this)
 {
