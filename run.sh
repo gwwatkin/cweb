@@ -15,6 +15,7 @@ PROGRAM_NAME="\\033[32m[run.sh]\\033[0m"
 
 LIBRARY_SOURCES=" \
     ./library/utils.c \
+    ./library/Path.c \
     ./library/vector/vector.c \
     ./library/hashmap/hashmap.c \
     ./library/server/AppKernel.c \

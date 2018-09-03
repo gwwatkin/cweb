@@ -32,6 +32,46 @@ HandlerReturnStatus_t fallbackHandler1(AppKernel_t* app,HandlerReturnStatus_t st
 
 
 
+
+void token_split(char* path, vector_t* out);
+
+
+
+
+int token_split_tests()
+{
+    
+    printf("Allocating a vector\n");
+    
+    vector_t* v = vector_new();
+        
+    char* str = "one/two/three/four/";
+    
+    printf("Testing this string:\n%s\n",str);
+    
+    token_split(str,v);
+    
+    printf("Was split in the following tokens:\n");
+    
+    char* token;
+    int i;
+    
+    foreach(v,i,token)
+        printf("\t%s\n",token);
+    
+    printf("Freeing its items\n");
+    
+    foreach(v,i,token)
+        free(token);
+    
+    printf("Freeing the vector\n");
+    
+    
+    vector_free(v);
+    
+    return 0;
+}
+
 int Route_unitTests()
 {
     printf("Creating a Route.\n");
@@ -93,13 +133,17 @@ int vector_unitTest()
 
 int main(){
     
-    pretty_title("Route Unit tests:");
+//     pretty_title("Route Unit tests:");
+//     
+//     Route_unitTests();
+//     
+//     pretty_title("vector Unit tests:");
+//     
+//     vector_unitTest();
     
-    Route_unitTests();
+    pretty_title("token_split tests");
     
-    pretty_title("vector Unit tests:");
-    
-    vector_unitTest();
+    token_split_tests();
     
     pretty_title("Done with tests");
     

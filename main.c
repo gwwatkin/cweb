@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 
 #include "library/server/AppKernel.h"
@@ -27,9 +28,40 @@
 #define HOSTNAME "0.0.0.0"
 
 
+HandlerReturnStatus_t index_h(AppKernel_t*k)
+{
+    printf("index called");
+    
+    
+    Request_t* request = AppKernel_getService(k,"request");
+    Response_t* response = AppKernel_getService(k,"response");
+    
+    printf("URI:%s\n",Request_getPath(request));
+    
+    char body[] = "this is the index";
+    
+    Response_setBody(response,body,strlen(body));
+    
+    return HANDLER_HANDLED;
+}
+
+
+
+
+
 HandlerReturnStatus_t say_hello(AppKernel_t*k)
 {
     printf("say_hello called\n");
+    
+    Request_t* request = AppKernel_getService(k,"request");
+    Response_t* response = AppKernel_getService(k,"response");
+    
+    printf("URI:%s\n",Request_getPath(request));
+    
+    char body[] = "hello";
+    
+    Response_setBody(response,body,strlen(body));
+    
     
     return HANDLER_HANDLED;
 }
@@ -38,7 +70,13 @@ HandlerReturnStatus_t say_hello(AppKernel_t*k)
 
 Route_t* make_dummy_root()
 {
-    Route_t* root = Route_new("",GET,"say_hello",say_hello,NULL);
+    
+    Route_t* root = Route_new("",GET,"root",NULL,NULL);
+    Route_t* hello_ = Route_new("hello",GET,"say_hello",say_hello,NULL);
+    Route_t* index_ = Route_new("",GET,"index",index_h,NULL);
+    
+    Route_addSubroute(root,hello_);
+    Route_addSubroute(root,index_);
     
     return root;
 }
