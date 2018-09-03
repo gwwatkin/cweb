@@ -1,5 +1,9 @@
 #include "App.h"
+
 #include <stdlib.h>
+
+#include "../Path.h"
+
 
 struct _App_t{
     AppKernel_t* kernel;
@@ -68,7 +72,7 @@ static void entry_point_for_app(EntryPointArgs_t* args_,Request_t* request, Resp
 {
     struct App_EntryPointArgs* args = args_;
     
-    const char* uri = Request_getPath(request);
+    Path_t* path = Path_fromString(Request_getPath(request));
     
     // Register the request and the response in the kernel
     
@@ -86,6 +90,8 @@ static void entry_point_for_app(EntryPointArgs_t* args_,Request_t* request, Resp
         NULL
     );
 
-
-    Route_handle(args->root,args->kernel,uri);
+    //TODO use a router and remove the Path import
+    Route_handle(args->root,args->kernel,path);
+    
+    Path_free(path);
 }

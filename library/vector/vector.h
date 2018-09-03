@@ -22,6 +22,8 @@ int vector_lenght(vector_t*);
 
 void vector_push(vector_t*, void*);
 
+void* vector_pop(vector_t*);
+
 void vector_set(vector_t*, int, void*);
 
 void *vector_at(vector_t*, int);
@@ -32,8 +34,7 @@ void vector_free(vector_t*);
 
 /**
  * Same as vector_free, but also cals free on all of its items.
- */ 
-void vector_freeAll(vector_t*);
+ */
 
 
 /* A simple macro for the very common array pattern

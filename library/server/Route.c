@@ -11,9 +11,9 @@ struct _Route_t
 {
     // Path is relative, that is if this route is a subroute of some other 
     // route the matching will continue past what's allready been matched.
-    char* path;
+    char* path_token;
     
-    Method_t method;
+    Method_t method;//unused at the moment
     
     // Used to refernce
     char* name;
@@ -32,8 +32,53 @@ struct _Route_t
 
 
 
+
+
+
+
+
+// BEGIN private methods
+
+
+
+/** 
+ * Call this route's handler, if no handler was specified return handler 
+ * continue.
+ */
+HandlerReturnStatus_t Route_callCurrentHandler_(Route_t* this, AppKernel_t* kernel);
+
+
+/**
+ * Same as Route_handle, but ignore the current node.
+ */
+HandlerReturnStatus_t Route_passToSubroutes_(
+    Route_t* this,
+    AppKernel_t* kernel,
+    Path_t* path
+);
+
+
+/** 
+ * Called when a handler returns a status different from HANDLER_CONTINUE or HANDLER_HANDLED.
+ */
+HandlerReturnStatus_t Route_runFallBackHandler_(
+    Route_t* this,
+    AppKernel_t* kernel,
+    HandlerReturnStatus_t status
+);
+
+// END private methods 
+
+
+
+
+
+
+
+
+
 Route_t* Route_new(
-    char* path, 
+    char* path_token, 
     Method_t method,
     char* name,
     HandlerClosure_t handler,
@@ -42,7 +87,7 @@ Route_t* Route_new(
 {
     Route_t* this = malloc(sizeof(Route_t));
     
-    this->path = strdup(path);
+    this->path_token = strdup(path_token);
     this->method = method;
     this->name = strdup(name);
     this->handler = handler;
@@ -66,74 +111,70 @@ void Route_addSubroute(Route_t* this, Route_t* other_route)
 
 
 
-
-HandlerReturnStatus_t Route_runFallBack_(Route_t* this, AppKernel_t* app, HandlerReturnStatus_t status)
+HandlerReturnStatus_t Route_handle(
+    Route_t* this,
+    AppKernel_t* kernel,
+    Path_t* path)
 {
-    if(this->fallback_handler != NULL)
-        return (this->fallback_handler)(app,status);
+    
+    HandlerReturnStatus_t status = Route_callCurrentHandler_(this,kernel);
+
+    if(status==HANDLER_CONTINUE)
+        status = Route_passToSubroutes_(this,kernel,path);
+    
+    if(status!=HANDLER_HANDLED)
+        status = Route_runFallBackHandler_(this,kernel,status);
         
     return status;
 }
 
 
 
-HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, const char* uri)
+
+HandlerReturnStatus_t Route_passToSubroutes_(
+    Route_t* this,
+    AppKernel_t* kernel,
+    Path_t* path)
 {
-    //if the url is shorter than the path then for sure there is no match.
-    if( strlen(uri)<strlen(this->path)) 
-        return HANDLER_NO_MATCH;
-    
-    //the strings are different
-    if(strncmp(this->path, uri, strlen(this->path))!=0)
-        return HANDLER_NO_MATCH;
-    
-    
-    
-    HandlerReturnStatus_t current_node_return_status = Route_handleThis_(this,app);
-
-    if(current_node_return_status==HANDLER_CONTINUE)
-    {
-        // The uri is not entirely consumed and we can continue.
-        // Find the first matching subroute, consume the uri string and continue.
-        current_node_return_status = Route_passToSubroutes_(this,app,uri);
-    }
-    
-    return current_node_return_status;
-}
-
-
-
-
-HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,const char* uri)
-{
-    HandlerReturnStatus_t ret;
     int i;
     Route_t* subroute;
 
+    
+    if(!vector_lenght(this->subroutes))
+        return HANDLER_HANDLED;
 
     foreach(this->subroutes,i,subroute)
     {
-        //consume the uri string
-        ret =  Route_handle(subroute, app, uri);
+        if(Path_tryToConsume(path,subroute->path_token))
+            return Route_handle(subroute,kernel,path);
+    }
         
-        //on a handle we stop
-        if(ret == HANDLER_HANDLED)
-            return HANDLER_HANDLED;
-        
-        //this is an error
-        if(ret != HANDLER_NO_MATCH)
-            return Route_runFallBack_(this,app,ret);
-    } 
-        
-    return Route_runFallBack_(this,app,HANDLER_NOT_FOUND);
+    return HANDLER_NOT_FOUND;
 }
 
-HandlerReturnStatus_t Route_handleThis_(Route_t* this, AppKernel_t* app)
+
+
+
+HandlerReturnStatus_t Route_runFallBackHandler_(
+    Route_t* this,
+    AppKernel_t* kernel,
+    HandlerReturnStatus_t status)
+{
+    if(this->fallback_handler != NULL)
+        return (this->fallback_handler)(kernel,status);
+        
+    return status;
+}
+
+
+
+
+HandlerReturnStatus_t Route_callCurrentHandler_(Route_t* this, AppKernel_t* kernel)
 {
     if(this->handler==NULL)
         return HANDLER_CONTINUE;
     
-    return (*this->handler)(app);
+    return (*this->handler)(kernel);
 }
 
 
@@ -147,7 +188,7 @@ void Route_dump(Route_t* this,int indent)
     printf("{\n");
     indent++;
     pindent(indent);
-    printf("path:%s\n",this->path);
+    printf("path:%s\n",this->path_token);
     pindent(indent);
     printf("method:%i\n",this->method);
     pindent(indent);
@@ -177,8 +218,8 @@ void Route_dump(Route_t* this,int indent)
 
 void Route_free(Route_t* this)
 {
-    free(this->path);
-    this->path = NULL;
+    free(this->path_token);
+    this->path_token = NULL;
     
     free(this->name);
     this->name = NULL;

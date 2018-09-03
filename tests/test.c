@@ -13,22 +13,7 @@
 
 
 
-HandlerReturnStatus_t testHandler1(AppKernel_t* app)
-{
-    printf("testHandler1 has been called!\n");
-    
-    return HANDLER_CONTINUE;
-}
 
-
-
-HandlerReturnStatus_t fallbackHandler1(AppKernel_t* app,HandlerReturnStatus_t status)
-{
-     printf("fallbackHandler1 has been called ");
-     printf("with status %i\n",status);
-     
-     return HANDLER_HANDLED;
-}
 
 
 
@@ -45,7 +30,7 @@ int token_split_tests()
     
     vector_t* v = vector_new();
         
-    char* str = "one/two/three/four/";
+    char* str = "one/two//three/four/";
     
     printf("Testing this string:\n%s\n",str);
     
@@ -72,14 +57,54 @@ int token_split_tests()
     return 0;
 }
 
+
+
+
+
+
+HandlerReturnStatus_t testHandler1(AppKernel_t* app)
+{
+    printf("testHandler1 has been called!\n");
+    
+    return HANDLER_CONTINUE;
+}
+
+
+HandlerReturnStatus_t testHandler2(AppKernel_t* app)
+{
+    printf("testHandler2 has been called!\n");
+    
+    return HANDLER_CONTINUE;
+}
+
+HandlerReturnStatus_t testHandler3(AppKernel_t* app)
+{
+    printf("testHandler3 has been called!\n");
+    
+    return HANDLER_CONTINUE;
+}
+
+
+HandlerReturnStatus_t fallbackHandler1(AppKernel_t* app,HandlerReturnStatus_t status)
+{
+     printf("fallbackHandler1 has been called ");
+     printf("with status %i\n",status);
+     
+     return HANDLER_HANDLED;
+}
+
+
+
 int Route_unitTests()
 {
     printf("Creating a Route.\n");
     Route_t* root = Route_new("",GET,"index",&testHandler1,&fallbackHandler1);
     
+    Route_t* a = Route_new("my",GET,"index",&testHandler2,NULL);
     
-    Route_t* a = Route_new("cadabra",GET,"index",&testHandler1,&fallbackHandler1);
+    Route_t* b = Route_new("path",GET,"index",&testHandler3,NULL);
     
+    Route_addSubroute(a,b);
     Route_addSubroute(root,a);
     
     printf("Printing it:\n");
@@ -90,7 +115,9 @@ int Route_unitTests()
     AppKernel_t* app = AppKernel_new();
     
     printf("Running the handler.\n");
-    Route_handle(root,app,"cadabra");
+    
+    Path_t*uri = Path_fromString("my/path");
+    Route_handle(root,app,uri);
     
     printf("Freing the kernel.\n");
     AppKernel_free(app);
@@ -133,10 +160,6 @@ int vector_unitTest()
 
 int main(){
     
-//     pretty_title("Route Unit tests:");
-//     
-//     Route_unitTests();
-//     
 //     pretty_title("vector Unit tests:");
 //     
 //     vector_unitTest();
@@ -144,6 +167,10 @@ int main(){
     pretty_title("token_split tests");
     
     token_split_tests();
+    
+    pretty_title("Route Unit tests");
+    
+    Route_unitTests();
     
     pretty_title("Done with tests");
     

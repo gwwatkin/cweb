@@ -38,11 +38,27 @@ void vector_push(vector_t *v, void *e)
     v->count++;
 }
 
+
+void* vector_pop(vector_t* this)
+{
+    size_t len = vector_lenght(this);
+    
+    if(!len)
+        return NULL;
+    
+    void* item = vector_at(this,len-1);
+    
+    vector_remove(this,len-1);
+            
+    return item;
+}
+
+
+
 void vector_set(vector_t *v, int index, void *e)
 {
-    if (index >= v->count) {
+    if (index >= v->count)
         return;
-    }
 
     v->data[index] = e;
 }
@@ -86,14 +102,5 @@ void vector_free(vector_t *v)
     free(v);
 }
 
-
-void vector_freeAll(vector_t *v)
-{
-    for (int i = 0; i < v->count; i++)
-        free(v->data[i]);
-    
-    
-    vector_free(v);
-}
 
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-
-# find . -type f -print0 | xargs -0 sed -i 's/VecPtr/vector/g'
+# TODO Run all these replacements using
+# find . -type f -print0 | xargs -0 sed -i 's/newstr/oldstr/g'
 #
-# to replace: 
+# vector_lenght/vector_size
 # Route_/RouteNode_
 # vector_/Vector_
 # hashmap/Hashmap

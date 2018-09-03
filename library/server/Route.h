@@ -3,6 +3,7 @@
 #include "Request.h"
 #include "Response.h"
 #include "AppKernel.h"
+#include "../Path.h"
 
 #include "../vector/vector.h"
  
@@ -20,8 +21,6 @@ typedef enum _HandlerReturnStatus_t
     HANDLER_ABORT = 2,
     
     HANDLER_NOT_FOUND = 3,
-    
-    HANDLER_NO_MATCH = 4,
     
 } HandlerReturnStatus_t;
 
@@ -43,7 +42,7 @@ typedef struct _Route_t Route_t;
 
 
 Route_t* Route_new(
-    char* path, 
+    char* path_token, 
     Method_t method,
     char* name,
     HandlerClosure_t handler,
@@ -55,17 +54,17 @@ Route_t* Route_new(
  * Call all the handlers that are in the path specified by the uri as long as
  * they return HANDLER_CONTINUE.
  * 
- * If another staus is returned, or no matching handler is found, the fallback handler
- * is called with, the status returned by the unsucessful handler or HANDLER_NOT_FOUND
- * respectively.
+ * If another staus is returned, or no matching handler is found, the fallback 
+ * handler is called with the status returned by the unsucessful handler or 
+ * HANDLER_NOT_FOUND respectively.
  */
-HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* app, const char* uri);
+HandlerReturnStatus_t Route_handle(Route_t* this, AppKernel_t* kernel, Path_t* path);
 
 
 
 /** 
  * Define a subroute.
- * Passes memory management to parent
+ * Passes memory management to parent.
  */
 void Route_addSubroute(Route_t* this, Route_t* other_route);
 
@@ -78,29 +77,5 @@ void Route_dump(Route_t* this,int indent);
 
 
 void Route_free(Route_t* this);
-
-
-
-
-/** private methods */
-
-
-
-/** 
- * Call this route's handler, if no handler was specified return handler continue.
- */
-HandlerReturnStatus_t Route_handleThis_(Route_t* this, AppKernel_t* app);
-
-
-/**
- * Same as Route_handle, but ignore the current node.
- */
-HandlerReturnStatus_t Route_passToSubroutes_(Route_t* this,AppKernel_t* app,const char* uri);
-
-
-/** 
- * Called when a handler returns a status different from HANDLER_CONTINUE or HANDLER_HANDLED.
- */
-HandlerReturnStatus_t Route_runFallBack_(Route_t* this,AppKernel_t* app ,HandlerReturnStatus_t status);
 
 
