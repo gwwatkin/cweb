@@ -9,7 +9,7 @@
 
 struct _Path_t{
     /*
-     * Nodes are stored backwards so largest index is the leftmost one.
+     * path tokens are stored backwards so largest index is the leftmost one.
      * This way the path can be efficently consumed from left to right.
      * 
      * All tokens are null terminated.
@@ -67,6 +67,11 @@ Path_t * Path_fromString(const char* path)
 
 int Path_tryToConsume(Path_t* this, const char* token)
 {
+    
+    if(vector_lenght(this->tokens)==0)
+        return *token=='\0'; 
+
+    
     //tokens are stored in revered order
     char* current = vector_at(this->tokens,vector_lenght(this->tokens)-1);
     

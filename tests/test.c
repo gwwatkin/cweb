@@ -116,17 +116,23 @@ int Route_unitTests()
     
     printf("Running the handler.\n");
     
-    Path_t*uri = Path_fromString("my/path");
+    Path_t*uri = Path_fromString("");
+    
+
     Route_handle(root,app,uri);
     
-    printf("Freing the kernel.\n");
+    
+    
+    printf("Freeing the path\n");
+    Path_free(uri);
+
+    printf("Freeing the kernel.\n");
     AppKernel_free(app);
     
     
     
-    printf("Freeing the route.\n");
-    Route_free(root);
-
+    printf("Freeing the routes.\n");
+    Route_free(root);//frees the children
 
     return 0;
 }

@@ -9,7 +9,11 @@
 # vector_/Vector_
 # hashmap/Hashmap
 
-PROGRAM_NAME="\\033[32m[run.sh]\\033[0m"
+
+PROGRAM_NAME="run.sh"
+
+#add the color
+PROGRAM_PRETTY_NAME="\\033[32m[$PROGRAM_NAME]\\033[0m"
 
 
 
@@ -36,7 +40,7 @@ ONION_SHARED=vendor/onion/build/src/onion/libonion.so;
 # compile onion
 if [ "$1" = "compile-onion" ];
 then
-    echo -e "$PROGRAM_NAME Compiling libonion";
+    echo -e "$PROGRAM_PRETTY_NAME Compiling libonion";
 
     cd vendor/onion
     mkdir build
@@ -50,23 +54,23 @@ fi
 
 if [ "$1" = "" ];
 then
-    echo -e "$PROGRAM_NAME Compiling the executable";
+    echo -e "$PROGRAM_PRETTY_NAME Compiling the executable";
 
     gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED $MAIN_SOURCES -g -Wall -o ./bin/main -lonion;
 
 
-    echo -e "$PROGRAM_NAME Running the executable";
+    echo -e "$PROGRAM_PRETTY_NAME Running the executable";
     ./bin/main 3000;
 fi
 
 if [ "$1" = "test" ];
 then
-    echo -e "$PROGRAM_NAME Compiling the tests";
+    echo -e "$PROGRAM_PRETTY_NAME Compiling the tests";
     
     gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED -g $TEST_SOURCES -Wall -o ./bin/tests -lonion;
 
 
-    echo -e "$PROGRAM_NAME Running the tests";
+    echo -e "$PROGRAM_PRETTY_NAME Running the tests";
     ./bin/tests;
 fi
 
