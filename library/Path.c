@@ -67,7 +67,7 @@ Path_t * Path_fromString(const char* path)
 
 int Path_tryToConsume(Path_t* this, const char* token)
 {
-    
+    //handle empty path
     if(vector_lenght(this->tokens)==0)
         return *token=='\0'; 
 
