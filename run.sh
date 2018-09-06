@@ -35,8 +35,6 @@ MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
 TEST_SOURCES="$LIBRARY_SOURCES ./tests/test.c"
 
 
-ONION_SHARED=vendor/onion/build/src/onion/libonion.so;
-
 # compile onion
 if [ "$1" = "compile-onion" ];
 then
@@ -56,7 +54,7 @@ if [ "$1" = "" ];
 then
     echo -e "$PROGRAM_PRETTY_NAME Compiling the executable";
 
-    gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED $MAIN_SOURCES -g -Wall -o ./bin/main -lonion;
+    gcc $MAIN_SOURCES -g -Wall -o ./bin/main -lonion;
 
 
     echo -e "$PROGRAM_PRETTY_NAME Running the executable";
@@ -67,7 +65,7 @@ if [ "$1" = "test" ];
 then
     echo -e "$PROGRAM_PRETTY_NAME Compiling the tests";
     
-    gcc -L$ONION_SHARED -Wl,-rpath=$ONION_SHARED -g $TEST_SOURCES -Wall -o ./bin/tests -lonion;
+    gcc  -g $TEST_SOURCES -Wall -o ./bin/tests -lonion;
 
 
     echo -e "$PROGRAM_PRETTY_NAME Running the tests";

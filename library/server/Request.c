@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "../../vendor/onion/src/onion/request.h"
+#include <onion/request.h>
 
 struct _Request_t {
     

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../vendor/onion/src/onion/types.h"
+#include <onion/types.h>
 
 typedef enum _Method_t
 {
