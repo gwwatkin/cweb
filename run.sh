@@ -42,6 +42,7 @@ DEFAULT_PORT=3000
 
 CFLAGS="-g -Wall"
 ONION_LINKER_FLAGS="-Wl,-rpath=./vendor/onion/build/src/onion -I./vendor/onion/src -L./vendor/onion/build/src/onion -lonion"
+CJSON_LINKER_FLAGS="-Wl,-rpath=./vendor/cJSON/build -I./vendor/cJSON -L./vendor/cJSON/build -lcjson"
 
 
 if [ ! -d "vendor" ];
@@ -77,12 +78,34 @@ then
 fi
 
 
+if [ ! -f "vendor/cJSON/build/libcjson.so" ];
+then
+
+        
+    echo -e "$PROGRAM_PRETTY_NAME Downloading cJSON"
+
+    cd vendor
+        git clone https://github.com/DaveGamble/cJSON.git
+    cd ..
+
+    echo -e "$PROGRAM_PRETTY_NAME Compiling cJSON"
+    
+    cd vendor/cJSON
+    mkdir build
+    cd build
+    cmake  -DENABLE_CJSON_TEST=Off ..
+    make 
+    cd ../../..
+
+fi
+
+
 
 if [ "$1" = "" ];
 then
     echo -e "$PROGRAM_PRETTY_NAME Compiling the executable"
 
-    gcc $MAIN_SOURCES $CFLAGS -o $MAIN_EXECUTABLE $ONION_LINKER_FLAGS
+    gcc $MAIN_SOURCES $CFLAGS -o $MAIN_EXECUTABLE $ONION_LINKER_FLAGS $CJSON_LINKER_FLAGS
 
 
     echo -e "$PROGRAM_PRETTY_NAME Running the executable"
@@ -94,7 +117,7 @@ if [ "$1" = "test" ];
 then
     echo -e "$PROGRAM_PRETTY_NAME Compiling the tests"
     
-    gcc $TEST_SOURCES $CFLAGS -o $TESTS_EXECUTABLE $ONION_LINKER_FLAGS
+    gcc $TEST_SOURCES $CFLAGS -o $TESTS_EXECUTABLE $ONION_LINKER_FLAGS $CJSON_LINKER_FLAGS
 
 
     echo -e "$PROGRAM_PRETTY_NAME Running the tests"
