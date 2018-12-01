@@ -31,15 +31,45 @@ LIBRARY_SOURCES=" \
 "
 
 MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
-
 TEST_SOURCES="$LIBRARY_SOURCES ./tests/test.c"
 
+MAIN_EXECUTABLE="./bin/main"
+TESTS_EXECUTABLE="./bin/tests"
 
-# compile onion
-if [ "$1" = "compile-onion" ];
+DEFAULT_PORT=3000
+
+
+
+CFLAGS="-g -Wall"
+ONION_LINKER_FLAGS="-Wl,-rpath=./vendor/onion/build/src/onion -I./vendor/onion/src -L./vendor/onion/build/src/onion -lonion"
+
+
+if [ ! -d "vendor" ];
 then
-    echo -e "$PROGRAM_PRETTY_NAME Compiling libonion";
+    mkdir vendor
+fi
 
+if [ ! -d "bin" ];
+then
+    mkdir bin
+fi
+
+
+if [ ! -f "vendor/onion/build/src/onion/libonion.so" ];
+then
+    
+    
+    
+    echo -e "$PROGRAM_PRETTY_NAME Downloading libonion"
+
+    cd vendor
+    
+        git clone https://github.com/davidmoreno/onion.git
+        git checkout tag/v0.8
+    cd ..
+
+    echo -e "$PROGRAM_PRETTY_NAME Compiling libonion"
+    
     cd vendor/onion
     mkdir build
     cd build
@@ -52,24 +82,27 @@ fi
 
 if [ "$1" = "" ];
 then
-    echo -e "$PROGRAM_PRETTY_NAME Compiling the executable";
+    echo -e "$PROGRAM_PRETTY_NAME Compiling the executable"
 
-    gcc $MAIN_SOURCES -g -Wall -o ./bin/main -lonion;
+    gcc $MAIN_SOURCES $CFLAGS -o $MAIN_EXECUTABLE $ONION_LINKER_FLAGS
 
 
-    echo -e "$PROGRAM_PRETTY_NAME Running the executable";
-    ./bin/main 3000;
+    echo -e "$PROGRAM_PRETTY_NAME Running the executable"
+    
+    $MAIN_EXECUTABLE $DEFAULT_PORT
 fi
 
 if [ "$1" = "test" ];
 then
-    echo -e "$PROGRAM_PRETTY_NAME Compiling the tests";
+    echo -e "$PROGRAM_PRETTY_NAME Compiling the tests"
     
-    gcc  -g $TEST_SOURCES -Wall -o ./bin/tests -lonion;
+    gcc $TEST_SOURCES $CFLAGS -o $TESTS_EXECUTABLE $ONION_LINKER_FLAGS
 
 
-    echo -e "$PROGRAM_PRETTY_NAME Running the tests";
-    ./bin/tests;
+    echo -e "$PROGRAM_PRETTY_NAME Running the tests"
+    
+    $TESTS_EXECUTABLE
+    
 fi
 
 
