@@ -15,7 +15,9 @@
 
 
 
-
+/**
+ * TODO use a proper testing framework
+ */
 
 
 void token_split(char* path, vector_t* out);

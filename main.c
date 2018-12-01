@@ -91,7 +91,7 @@ HandlerReturnStatus_t say_hello(AppKernel_t*k)
     Response_setBody(response,body,strlen(body));
     
 
-    return HANDLER_ABORT;
+    return HANDLER_HANDLED;
 }
 
 

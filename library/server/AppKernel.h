@@ -48,6 +48,8 @@ typedef Service_t* (*ServiceConstructorClosure_t)(void*);
  * Frees both the object and the constructor parameters.
  * This should be able to handle the case when the service is not yet 
  * initialized (i.e. the pointer is still null)
+ * 
+ * TODO should parameter freeing be handled differently?
  */
 typedef void (*ServiceDeconstructorClosure_t)(Service_t*,void*);
 

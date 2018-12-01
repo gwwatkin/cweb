@@ -1,6 +1,6 @@
 #include "Response.h"
 
-#include "../../vendor/onion/src/onion/response.h"
+#include <onion/response.h>
 
 #include <stdlib.h>
 #include <string.h>

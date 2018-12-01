@@ -58,8 +58,6 @@ fi
 if [ ! -f "vendor/onion/build/src/onion/libonion.so" ];
 then
     
-    
-    
     echo -e "$PROGRAM_PRETTY_NAME Downloading libonion"
 
     cd vendor
