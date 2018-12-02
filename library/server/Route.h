@@ -40,11 +40,12 @@ typedef HandlerReturnStatus_t (*FallbackHandlerClosure_t)(AppKernel_t*,HandlerRe
 typedef struct _Route_t Route_t;
 
 
-
+/**
+ * each route carries the string to be matched against within itself
+ */
 Route_t* Route_new(
-    char* path_token, 
+    const char* path_token, 
     Method_t method,
-    char* name,
     HandlerClosure_t handler,
     FallbackHandlerClosure_t fallback_handler
 );
