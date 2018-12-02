@@ -15,9 +15,6 @@ struct _Route_t
     
     Method_t method;//unused at the moment
     
-    // Used to refernce
-    char* name;
-    
     // Executed if not NULL;
     HandlerClosure_t handler; 
     
@@ -78,9 +75,8 @@ HandlerReturnStatus_t Route_runFallBackHandler_(
 
 
 Route_t* Route_new(
-    char* path_token, 
+    const char* path_token, 
     Method_t method,
-    char* name,
     HandlerClosure_t handler,
     FallbackHandlerClosure_t fallback_handler
 )
@@ -89,7 +85,6 @@ Route_t* Route_new(
     
     this->path_token = strdup(path_token);
     this->method = method;
-    this->name = strdup(name);
     this->handler = handler;
     this->fallback_handler = fallback_handler;
     
@@ -192,8 +187,6 @@ void Route_dump(Route_t* this,int indent)
     pindent(indent);
     printf("method:%i\n",this->method);
     pindent(indent);
-    printf("name:%s\n",this->name);
-    pindent(indent);
     printf("handler:%lx\n",(unsigned long) this->handler);
     pindent(indent);
     printf("subroutes:\n");
@@ -221,8 +214,6 @@ void Route_free(Route_t* this)
     free(this->path_token);
     this->path_token = NULL;
     
-    free(this->name);
-    this->name = NULL;
     
     for(int i = 0; i<vector_lenght(this->subroutes); i++)
         Route_free(vector_at(this->subroutes,i));

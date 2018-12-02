@@ -1,0 +1,37 @@
+{
+    "__comment" : "This is a sample of a route file, this is used to determin which sequence of handlers is called on which route",
+    
+  
+    "path_token" : "" ,
+    "method" : "GET",
+    "handler" : "",
+    "fallback_handler": "root_fallback_h"
+    
+    
+    "subroutes":
+    [
+        {
+            "path_token" : "" ,
+            "method" : "GET",
+            "handler" : "index_h",
+            "fallback_handler": ""
+        },
+        
+        {
+            "path_token" : "hello" ,
+            "method" : "GET",
+            "handler" : "hello_",
+            "fallback_handler": ""
+        },
+        
+        {
+            "path_token" : "error" ,
+            "method" : "GET",
+            "handler" : "",
+            "fallback_handler": ""
+        }
+        
+    ]
+    
+    
+}

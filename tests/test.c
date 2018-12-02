@@ -8,7 +8,7 @@
 
 #include "../library/vector/vector.h"
 #include "../library/server/Route.h"
-
+#include "../library/parsers/RouteParser.h"
 
 
 
@@ -100,11 +100,11 @@ HandlerReturnStatus_t fallbackHandler1(AppKernel_t* app,HandlerReturnStatus_t st
 int Route_unitTests()
 {
     printf("Creating a Route.\n");
-    Route_t* root = Route_new("",GET,"index",&testHandler1,&fallbackHandler1);
+    Route_t* root = Route_new("",GET,&testHandler1,&fallbackHandler1);
     
-    Route_t* a = Route_new("my",GET,"index",&testHandler2,NULL);
+    Route_t* a = Route_new("my",GET,&testHandler2,NULL);
     
-    Route_t* b = Route_new("path",GET,"index",&testHandler3,NULL);
+    Route_t* b = Route_new("path",GET,&testHandler3,NULL);
     
     Route_addSubroute(a,b);
     Route_addSubroute(root,a);
@@ -134,7 +134,7 @@ int Route_unitTests()
     
     
     printf("Freeing the routes.\n");
-    Route_free(root);//frees the children
+    Route_free(root);//frees the children too
 
     return 0;
 }
@@ -166,12 +166,51 @@ int vector_unitTest()
 }
 
 
+
+
+void RouteParser_unitTest()
+{
+    char* generated = RouteParser_generateRoutes(
+        "{\"path_token\" : \"\" ,\
+        \"method\" : \"GET\",\
+        \"handler\" : \"root_h\",\
+        \"fallback_handler\": \"root_fallback_h\",\
+        \
+        \
+        \"subroutes\":\
+        [\
+            {\
+                \"path_token\" : \"\" ,\
+                \"method\" : \"GET\",\
+                \"handler\" : \"index_h\",\
+                \"fallback_handler\": \"\"\
+            },\
+            \
+            {\
+                \"path_token\" : \"hello\" ,\
+                \"method\" : \"GET\",\
+                \"handler\" : \"hello_\",\
+                \"fallback_handler\": \"\"\
+            }\
+        ]\
+        }\
+        "
+    );
+    
+    printf("%s",generated);
+    
+    free(generated);
+}
+
+
+
 int main(){
+
+/*    
+    pretty_title("vector Unit tests:");
     
-//     pretty_title("vector Unit tests:");
-//     
-//     vector_unitTest();
-    
+    vector_unitTest();
+
     pretty_title("token_split tests");
     
     token_split_tests();
@@ -180,6 +219,12 @@ int main(){
     
     Route_unitTests();
     
-    pretty_title("Done with tests");
+    pretty_title("Done with tests");*/
+
+
+    pretty_title("RouteParser unit tests");
+    
+    RouteParser_unitTest();
+
     
 }
