@@ -81,15 +81,16 @@ char* RouteParser_generateRoutes(const char* json)
         out = NULL;
     else
     {
-        char* route_construction_body = json2route(parsed_route,0,0);
+        char* compliled_routes_body = json2route(parsed_route,0,0);
         out = malloc((MAX_JSON_SIZE)*sizeof(char));
         
         sprintf(
             out,
             OUTPUT_BODY,
-            route_construction_body
+            compliled_routes_body
         );
         
+        free(compliled_routes_body);
     }
         
     cJSON_Delete(parsed_route);
@@ -113,8 +114,9 @@ static char * json2route(const cJSON* json, int current_route_suffix, int parent
     
     // construct the subroutes
     char* substrings_body =  malloc((MAX_JSON_SIZE)*sizeof(char));
-    cJSON* subroute;
+    substrings_body[0] = '\0';
     int i=1;
+    cJSON* subroute;
     cJSON_ArrayForEach(subroute,subroutes)
     {
         char* compiled_subroute = json2route(subroute,current_route_suffix+i,current_route_suffix);
