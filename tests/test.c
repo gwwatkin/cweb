@@ -177,22 +177,31 @@ void RouteParser_unitTest()
         \"fallback_handler\": \"root_fallback_h\",\
         \
         \
-        \"subroutes\":\
-        [\
-            {\
-                \"path_token\" : \"\" ,\
-                \"method\" : \"GET\",\
-                \"handler\" : \"index_h\",\
-                \"fallback_handler\": \"\"\
-            },\
-            \
-            {\
-                \"path_token\" : \"hello\" ,\
-                \"method\" : \"GET\",\
-                \"handler\" : \"hello_\",\
-                \"fallback_handler\": \"\"\
-            }\
-        ]\
+            \"subroutes\":\
+            [\
+                {\
+                    \"path_token\" : \"\" ,\
+                    \"method\" : \"GET\",\
+                    \"handler\" : \"index_h\",\
+                    \"fallback_handler\": \"\"\
+                },\
+                \
+                {\
+                    \"path_token\" : \"hello\" ,\
+                    \"method\" : \"GET\",\
+                    \"handler\" : \"hello_h\",\
+                    \"fallback_handler\": \"\",\
+                    \"subroutes\":\
+                    [\
+                        {\
+                            \"path_token\" : \"2\" ,\
+                            \"method\" : \"GET\",\
+                            \"handler\" : \"index_h\",\
+                            \"fallback_handler\": \"\"\
+                        }\
+                    ]\
+                }\
+            ]\
         }\
         "
     );

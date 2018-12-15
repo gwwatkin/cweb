@@ -9,7 +9,7 @@
 #include "library/server/Request.h"
 #include "library/server/Response.h"
 #include "library/server/Server.h"
-
+#include "library/server/Route.h"
 /*
  * 
  * +_-_-_-_-_-_-_-_-_-_+
@@ -99,10 +99,10 @@ HandlerReturnStatus_t say_hello(AppKernel_t*k)
 Route_t* make_dummy_root()
 {
     
-    Route_t* root = Route_new("",GET,"root",NULL,fallback);
+    Route_t* root = Route_new("",GET,NULL,fallback);
     
-    Route_t* hello_ = Route_new("hello",GET,"say_hello",say_hello,NULL);
-    Route_t* index_ = Route_new("",GET,"index",index_h,NULL);
+    Route_t* hello_ = Route_new("hello",GET,say_hello,NULL);
+    Route_t* index_ = Route_new("",GET,index_h,NULL);
     
     Route_addSubroute(root,hello_);
     Route_addSubroute(root,index_);

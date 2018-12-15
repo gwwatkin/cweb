@@ -28,13 +28,16 @@ LIBRARY_SOURCES=" \
     ./library/server/Response.c \
     ./library/server/Server.c \
     ./library/server/App.c \
+    ./library/string/Str.c \
 "
 
 MAIN_SOURCES="$LIBRARY_SOURCES ./main.c"
 TEST_SOURCES="$LIBRARY_SOURCES ./tests/test.c"
+DEBUG_SOURCES="$LIBRARY_SOURCES ./tests/debug.c"
 
 MAIN_EXECUTABLE="./bin/main"
 TESTS_EXECUTABLE="./bin/tests"
+DEBUG_EXECUTABLE="./bin/debug"
 
 DEFAULT_PORT=3000
 
@@ -100,6 +103,14 @@ then
 fi
 
 
+if [ ! -d "autogen" ]; then
+    mkdir autogen
+fi
+if [ ! -d "bin" ]; then
+    mkdir bin
+fi
+
+
 
 if [ "$1" = "" ];
 then
@@ -128,4 +139,15 @@ fi
 
 
 
+if [ "$1" = "debug" ];
+then
+    echo -e "$PROGRAM_PRETTY_NAME Compiling the tests"
+    
+    gcc $DEBUG_SOURCES $CFLAGS -o $DEBUG_EXECUTABLE $ONION_LINKER_FLAGS $CJSON_LINKER_FLAGS
 
+    
+    echo -e "$PROGRAM_PRETTY_NAME Running the tests"
+    
+    $DEBUG_EXECUTABLE
+    
+fi
